@@ -1,0 +1,40 @@
+name: 🚀 Deploy Corral X to Server
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Clonar el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # Paso 2: Validar HTML
+      - name: Validate HTML
+        uses: validator/action@v1
+        with:
+          html_files: '**/*.html'
+
+      # Paso 3: Desplegar por FTP (como tu modelo Laravel)
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          timeout: 60000
+          server-dir: public_html/
+          exclude: |
+            .git*
+            .github
+            README.md
+            node_modules
+            *.log

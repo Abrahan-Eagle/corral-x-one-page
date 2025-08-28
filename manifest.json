@@ -1,0 +1,59 @@
+{
+  "name": "Corral X - Marketplace Ganadero",
+  "short_name": "Corral X",
+  "description": "La plataforma digital que une a ganaderos de toda Venezuela. Conecta, compra y vende ganado con facilidad.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#386A20",
+  "theme_color": "#386A20",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "categories": ["business", "lifestyle", "shopping"],
+  "icons": [
+    {
+      "src": "https://aiblockweb.com/img/img_renny/2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://aiblockweb.com/img/img_renny/2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://aiblockweb.com/img/img_renny/photo_5003987846368964265_y.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Publicar Ganado",
+      "short_name": "Publicar",
+      "description": "Publica tu ganado en el marketplace",
+      "url": "/#descargar",
+      "icons": [
+        {
+          "src": "https://aiblockweb.com/img/img_renny/2.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://corralx.com"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
