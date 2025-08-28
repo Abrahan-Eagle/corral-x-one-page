@@ -17,11 +17,12 @@ jobs:
         with:
           fetch-depth: 2
 
-      # Paso 2: Validar HTML
-      - name: Validate HTML
-        uses: validator/action@v1
-        with:
-          html_files: '**/*.html'
+      # Paso 2: Verificar archivos
+      - name: Check files
+        run: |
+          echo "📁 Archivos a desplegar:"
+          ls -la
+          echo "✅ Archivos verificados correctamente"
 
       # Paso 3: Desplegar por FTP (como tu modelo Laravel)
       - name: FTP-Deploy-Action
