@@ -24,8 +24,25 @@ jobs:
           ls -la
           echo "✅ Archivos verificados correctamente"
 
-      # Paso 3: Desplegar por FTP (como tu modelo Laravel)
-      - name: FTP-Deploy-Action
+      # Paso 3: Limpiar servidor (borrar archivos viejos)
+      - name: Clean server files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          timeout: 60000
+          server-dir: /
+          dangerous-clean-slate: true
+          exclude: |
+            .git*
+            .github
+            README.md
+            node_modules
+            *.log
+
+      # Paso 4: Desplegar archivos nuevos
+      - name: Deploy new files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
