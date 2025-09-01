@@ -101,7 +101,7 @@
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover::after {
+        .nav-link:hover::after, .nav-link.active::after {
             width: 100%;
             left: 0;
         }
@@ -137,24 +137,27 @@
             box-shadow: 0 10px 25px rgba(56, 106, 32, 0.3);
         }
 
-        /* Hero section con gradiente animado */
+        /* Hero section con gradiente animado y parallax */
         #inicio {
+            padding-top: 160px; /* Espacio para la barra de navegación fija */
+            padding-bottom: 60px;
+            display: flex;
+            align-items: center; /* Centra verticalmente el contenido si hay espacio extra */
+            min-height: 65vh; /* Asegura que el título tenga suficiente espacio */
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
             background: linear-gradient(-45deg, #e3f2fd, #f1f8e9, #fff3e0, #fce4ec);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
-            padding-top: 120px;
-            padding-bottom: 100px;
-            position: relative;
-            overflow: hidden;
         }
 
-        #inicio::before {
+        .hero-background::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(circle at 20% 50%, rgba(56, 106, 32, 0.1) 0%, transparent 50%),
                         radial-gradient(circle at 80% 20%, rgba(124, 179, 66, 0.1) 0%, transparent 50%);
         }
@@ -185,6 +188,10 @@
         }
 
         /* Mockup del teléfono mejorado */
+        .phone-mockup-wrapper {
+            /* Se elimina el efecto parallax y el margen superior. El posicionamiento ahora es natural. */
+            max-width: 300px; /* Coincide con el ancho del teléfono para que mx-auto funcione bien */
+        }
         .phone-mockup {
             position: relative;
             margin: auto;
@@ -220,7 +227,7 @@
             transform: scale(1.05);
         }
 
-        /* Cards de características mejoradas */
+        /* Cards de características mejoradas con efecto de brillo */
         .feature-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -229,28 +236,30 @@
             position: relative;
             overflow: hidden;
         }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
+        
         .feature-card:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 
                 0 20px 40px rgba(0,0,0,.15),
                 0 0 0 1px rgba(56, 106, 32, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: var(--mouse-y, 50%);
+            left: var(--mouse-x, 50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, transparent 80%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-icon {
@@ -305,36 +314,6 @@
             animation: float 20s linear infinite;
         }
 
-        /* Botones de descarga mejorados */
-        .download-btn {
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .download-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .download-btn:hover::before {
-            left: 100%;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
         /* Footer mejorado */
         footer {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
@@ -364,15 +343,6 @@
         footer .text-muted.small {
             font-size: 0.9rem;
             margin-bottom: 0;
-        }
-
-        #logo-footer {
-            height: var(--logo-altura-footer);
-            transition: transform 0.3s ease;
-        }
-
-        #logo-footer:hover {
-            transform: scale(1.05);
         }
 
         /* Animaciones de scroll mejoradas */
@@ -437,133 +407,32 @@
                 max-height: 80px !important;
             }
 
-            .nav-link {
-                padding: 0.25rem 0.5rem !important;
-                font-size: 0.9rem;
-            }
-
-            #inicio {
-                padding-top: 80px;
-                padding-bottom: 60px;
-            }
-
-            footer {
-                padding: 20px 0 !important;
-            }
-
-            footer p {
-                font-size: 0.8rem;
-                margin-bottom: 0.3rem !important;
-            }
-
-            footer .text-muted.small {
-                font-size: 0.7rem;
-            }
-
-            .hero-content {
-                padding: 0 1rem;
-            }
-
-            .feature-card {
-                padding: 1rem;
-            }
-
-            .step-circle {
-                width: 80px;
-                height: 80px;
-            }
-
-            .cta-section {
-                padding: 80px 0;
-            }
-
-            .btn-primary {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-
-            .download-btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-            }
-
-            .navbar-brand img {
-                height: auto;
-                max-height: 80px;
-                min-height: 60px;
-                width: auto;
-            }
-
             .navbar-collapse {
                 position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
+                top: 100%; left: 0; width: 100%;
                 background-color: rgba(255, 255, 255, 0.95);
-                z-index: 1050;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1050; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 padding: 1rem;
-            }
-
-            .navbar-nav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .nav-item {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
-
-            .nav-link {
-                width: 100%;
-                text-align: left;
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
             }
         }
 
         /* Loading animation */
         .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
             transition: opacity 0.5s ease;
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-top: 4px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Parallax effect */
-        .parallax {
-            transform: translateZ(0);
-            will-change: transform;
-        }
-
-        /* Glassmorphism effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -600,7 +469,8 @@
         </div>
     </nav>
 
-    <main>
+    <div class="position-relative overflow-hidden">
+        <div class="hero-background"></div>
         <!-- Hero Section mejorada -->
         <section id="inicio">
             <div class="container text-center hero-content">
@@ -616,18 +486,24 @@
                             Corral X es la plataforma digital que une a ganaderos de toda Venezuela. Encuentra los mejores ejemplares o publica tu rebaño para miles de compradores, todo desde la palma de tu mano.
                         </p>
                         <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3 reveal">
-                            <a href="#descargar" class="opacity-75 download-link">
+                            <a href="#descargar" class="download-link">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png" alt="Descargar en App Store" style="height: 60px; transition: transform 0.3s ease;">
                             </a>
-                            <a href="#descargar" class="opacity-75 download-link">
+                            <a href="#descargar" class="download-link">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" alt="Descargar en Google Play" style="height: 60px; transition: transform 0.3s ease;">
                             </a>
                         </div>
                         <p class="text-muted small mt-3 reveal">Próximamente disponible</p>
                     </div>
                 </div>
-                <div class="mt-5 reveal">
-                    <div class="phone-mockup parallax">
+            </div>
+        </section>
+
+        <!-- Phone Mockup Section -->
+        <section class="phone-section pb-5" style="position: relative;">
+            <div class="container">
+                <div class="reveal phone-mockup-wrapper mx-auto">
+                    <div class="phone-mockup">
                         <div class="phone-screen">
                             <img src="https://aiblockweb.com/img/img_renny/photo_5003987846368964265_y.jpg" alt="Captura de pantalla de la app Corral X">
                         </div>
@@ -635,7 +511,9 @@
                 </div>
             </div>
         </section>
+    </div>
 
+    <main>
         <!-- Características mejoradas -->
         <section id="caracteristicas" style="padding: 120px 0;">
             <div class="container">
@@ -704,7 +582,7 @@
 
         <!-- Beneficios Section -->
         <section id="beneficios" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 120px 0;">
-            <div class="container">
+             <div class="container">
                 <div class="text-center mx-auto mb-5" style="max-width: 700px;">
                     <h2 class="fw-bold mb-4 reveal">Beneficios Clave para Tu Negocio</h2>
                     <p class="text-muted fs-5 reveal">Descubre por qué Corral X es la herramienta definitiva para el ganadero venezolano.</p>
@@ -856,33 +734,9 @@
                 });
             }, observerOptions);
 
-            // Observar todos los elementos con animaciones
             const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
             revealElements.forEach(element => {
                 observer.observe(element);
-            });
-
-            // Efecto parallax suave
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const parallaxElements = document.querySelectorAll('.parallax');
-                
-                parallaxElements.forEach(element => {
-                    const speed = 0.5;
-                    element.style.transform = `translateY(${scrolled * speed}px)`;
-                });
-            });
-
-            // Navbar scroll effect
-            const navbar = document.getElementById('header');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-                    navbar.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.15)';
-                } else {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-                    navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
-                }
             });
 
             // Smooth scroll para los enlaces de navegación
@@ -891,7 +745,7 @@
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
-                        const offsetTop = target.offsetTop - 100;
+                        const offsetTop = target.offsetTop - 100; 
                         window.scrollTo({
                             top: offsetTop,
                             behavior: 'smooth'
@@ -900,186 +754,17 @@
                 });
             });
 
-            // Efectos hover para download links
-            document.querySelectorAll('.download-link').forEach(link => {
-                link.addEventListener('mouseenter', function() {
-                    this.querySelector('img').style.transform = 'scale(1.1)';
-                });
-                
-                link.addEventListener('mouseleave', function() {
-                    this.querySelector('img').style.transform = 'scale(1)';
-                });
-            });
-
-            // Efecto de typing para el título principal
-            const title = document.querySelector('.display-4');
-            const titleText = title.textContent;
-            title.textContent = '';
-            
-            setTimeout(() => {
-                let i = 0;
-                const typeWriter = () => {
-                    if (i < titleText.length) {
-                        title.textContent += titleText.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, 50);
-                    }
-                };
-                typeWriter();
-            }, 1200);
-
-            // Contador animado (si quisieras agregar estadísticas)
-            function animateCounter(element, target, duration = 2000) {
-                let start = 0;
-                const increment = target / (duration / 16);
-                
-                const timer = setInterval(() => {
-                    start += increment;
-                    element.textContent = Math.floor(start);
-                    
-                    if (start >= target) {
-                        element.textContent = target;
-                        clearInterval(timer);
-                    }
-                }, 16);
-            }
-
-            // Efecto de partículas en el background (opcional)
-            function createParticle() {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 4 + 1 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.background = 'rgba(56, 106, 32, 0.3)';
-                particle.style.borderRadius = '50%';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = '100%';
-                particle.style.pointerEvents = 'none';
-                particle.style.zIndex = '1';
-                
-                document.querySelector('#inicio').appendChild(particle);
-                
-                const duration = Math.random() * 3000 + 2000;
-                particle.animate([
-                    { transform: 'translateY(0px)', opacity: 0 },
-                    { transform: 'translateY(-100vh)', opacity: 1 }
-                ], {
-                    duration: duration,
-                    easing: 'linear'
-                }).onfinish = () => particle.remove();
-            }
-
-            // Crear partículas ocasionalmente
-            setInterval(createParticle, 3000);
-
-            // Preloader para imágenes
-            const images = document.querySelectorAll('img');
-            let loadedImages = 0;
-            
-            images.forEach(img => {
-                if (img.complete) {
-                    loadedImages++;
-                } else {
-                    img.addEventListener('load', () => {
-                        loadedImages++;
-                        if (loadedImages === images.length) {
-                            document.body.classList.add('loaded');
-                        }
-                    });
-                }
-            });
-
-            // Efectos de mouse para las cards
+            // Efecto de brillo para las cards
             document.querySelectorAll('.feature-card').forEach(card => {
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateX = (y - centerY) / 10;
-                    const rotateY = (centerX - x) / 10;
-                    
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.02)`;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
                 });
-                
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-10px) scale(1.02)';
-                });
-            });
-
-            // Easter egg: Konami code
-            let konamiCode = [];
-            const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-            
-            document.addEventListener('keydown', (e) => {
-                konamiCode.push(e.keyCode);
-                if (konamiCode.length > konamiSequence.length) {
-                    konamiCode.shift();
-                }
-                
-                if (konamiCode.join(',') === konamiSequence.join(',')) {
-                    // Activar modo fiesta
-                    document.body.style.animation = 'gradient 2s ease infinite';
-                    setTimeout(() => {
-                        document.body.style.animation = '';
-                    }, 5000);
-                }
             });
         });
-
-        // Service Worker para PWA (opcional)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
     </script>
-
-    <style>
-        /* Estilos adicionales para mejor rendimiento */
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        img {
-            image-rendering: optimizeQuality;
-        }
-        
-        /* Mejoras de accesibilidad */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        
-        /* Focus states mejorados */
-        .btn:focus,
-        .nav-link:focus {
-            outline: 2px solid var(--accent-color);
-            outline-offset: 2px;
-        }
-        
-        /* Mejoras para dispositivos táctiles */
-        @media (hover: none) {
-            .feature-card:hover {
-                transform: none;
-            }
-            
-            .btn-primary:hover {
-                transform: none;
-            }
-        }
-    </style>
 </body>
+</html>
