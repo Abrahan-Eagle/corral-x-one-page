@@ -37,12 +37,17 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden; /* Evita desbordamientos horizontales */
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-light);
             color: var(--text-dark);
             overflow-x: hidden;
             line-height: 1.6;
+            transform: translateZ(0); /* Fuerza el renderizado inicial correcto */
         }
 
         /* Asegura que ninguna imagen desborde en pantallas pequeñas */
@@ -749,6 +754,12 @@
                     loadingOverlay.style.display = 'none';
                 }, 500);
             }, 1000);
+
+            // Ajustar el viewport al cargar la página
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                document.body.style.overflow = '';
+            }, 100); // Permite que el navegador ajuste el contenido
 
             // Animaciones de scroll mejoradas
             const observerOptions = {
