@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Indica al navegador que la página está diseñada para un esquema de color claro y previene la inversión automática de colores -->
-    <meta name="color-scheme" content="light">
+    <meta name="color-scheme" content="light dark">
     <title>Corral X - El Marketplace Ganadero de Venezuela</title>
     
     <!-- Bootstrap CSS -->
@@ -26,6 +26,8 @@
             --primary-dark: #2a5218;
             --primary-light: #4a7a30;
             --accent-color: #7CB342;
+            --fuchsia-gradient-start: #f0abfc;
+            --fuchsia-gradient-end: #a855f7;
             --bg-light: #FCFCFC;
             --text-dark: #1a1a1a;
             --text-muted: #6c757d;
@@ -48,6 +50,28 @@
             overflow-x: hidden;
             line-height: 1.6;
             transform: translateZ(0); /* Fuerza el renderizado inicial correcto */
+        }
+
+        /* --- ESTILOS PARA MODO OSCURO --- */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+            .navbar {
+                background-color: rgba(18, 18, 18, 0.85) !important;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            }
+            .navbar-brand img {
+                content: url('https://aiblockweb.com/img/img_renny/5024082057021730621.jpg');
+            }
+            #logo-footer {
+                content: url('https://aiblockweb.com/img/img_renny/5024082057021730621.jpg');
+            }
+            .display-4 {
+                background: linear-gradient(135deg, var(--fuchsia-gradient-start), var(--fuchsia-gradient-end));
+                background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            }
         }
 
         /* Asegura que ninguna imagen desborde en pantallas pequeñas */
