@@ -16,12 +16,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="icon" href="https://aiblockweb.com/img/img_renny/2.png" type="image/png">
+    <link rel="icon" href="https://aiblockweb.com/img/img_renny/LOGO_CORRAL.png" type="image/png">
 
     <style>
         :root {
-            --logo-altura-barra: 180px; 
-            --logo-altura-footer: 180px;
+            --logo-altura-barra: 40px; /* Controla el tamaño del logo de la barra de navegación */
+            --logo-altura-footer: 200px; /* <-- Aumenta este valor para hacer más grande el logo del footer */
             --primary-color: #386A20;
             --primary-dark: #2a5218;
             --primary-light: #4a7a30;
@@ -326,7 +326,7 @@
         }
         
         #logo-footer {
-            height: var(--logo-altura-footer);
+            height: var(--logo-altura-footer); /* Usa la variable específica para el footer */
             transition: transform 0.3s ease;
             margin-bottom: 1.5rem;
         }
@@ -398,8 +398,7 @@
 
             :root {
                 --logo-altura-barra: 60px;
-                --logo-altura-footer: 50px;
-            }
+                --logo-altura-footer: 100px;
 
             .navbar {
                 padding: 0.5rem 1rem;
@@ -443,9 +442,9 @@
 
     <!-- Navbar mejorada -->
     <nav id="header" class="navbar navbar-expand-md navbar-light fixed-top">
-        <div class="container">
+        <div class="container-fluid">
             <a class="navbar-brand" href="#inicio">
-                <img src="https://aiblockweb.com/img/img_renny/2.png" alt="Logo Corral X">
+                <img src="https://aiblockweb.com/img/img_renny/LOGO_CORRAL.png" alt="Logo Corral X">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
