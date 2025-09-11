@@ -45,6 +45,12 @@
             line-height: 1.6;
         }
 
+        /* Asegura que ninguna imagen desborde en pantallas pequeñas */
+        img { 
+            max-width: 100%; 
+            height: auto; 
+        }
+
         /* Animaciones globales */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
@@ -139,7 +145,7 @@
 
         /* Hero section con gradiente animado y parallax */
         #inicio {
-            padding-top: 160px; /* Espacio para la barra de navegación fija */
+            padding-top: 120px; /* Espacio para la barra de navegación fija */
             padding-bottom: 60px;
             display: flex;
             align-items: center; /* Centra verticalmente el contenido si hay espacio extra */
@@ -383,6 +389,16 @@
             scroll-behavior: smooth;
         }
 
+        /* Badges de tienda (App Store / Google Play) */
+        .store-badge {
+            height: 56px;
+            transition: transform 0.3s ease;
+        }
+
+        .download-link:hover .store-badge {
+            transform: translateY(-1px) scale(1.02);
+        }
+
         /* Responsive improvements */
         @media (max-width: 768px) {
             .phone-mockup {
@@ -412,6 +428,24 @@
                 background-color: rgba(255, 255, 255, 0.95);
                 z-index: 1050; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 padding: 1rem;
+            }
+
+            #inicio {
+                padding-top: 110px;
+            }
+
+            .store-badge {
+                height: 48px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .display-4 {
+                font-size: 1.75rem;
+            }
+
+            .store-badge {
+                height: 44px;
             }
         }
 
@@ -468,7 +502,7 @@
         </div>
     </nav>
 
-    <div class="position-relative overflow-hidden" style="padding-top: 100px;">
+    <div class="position-relative overflow-hidden" style="padding-top: 0;">
         <div class="hero-background"></div>
         <!-- Hero Section mejorada -->
         <section id="inicio">
@@ -487,10 +521,10 @@
                             </p>
                             <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start align-items-center gap-3 reveal">
                             <a href="#descargar" class="download-link">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png" alt="Descargar en App Store" style="height: 60px; transition: transform 0.3s ease;">
+                                <img class="store-badge" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png" alt="Descargar en App Store">
                             </a>
                             <a href="#descargar" class="download-link">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" alt="Descargar en Google Play" style="height: 60px; transition: transform 0.3s ease;">
+                                <img class="store-badge" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" alt="Descargar en Google Play">
                             </a>
                         </div>
                         <p class="text-muted small mt-3 reveal">Próximamente disponible</p>
@@ -677,10 +711,10 @@
                     </p>
                     <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3 reveal">
                         <a href="#!" class="opacity-75 download-link">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png" alt="Descargar en App Store" style="height: 60px; transition: transform 0.3s ease;">
+                            <img class="store-badge" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png" alt="Descargar en App Store">
                         </a>
                         <a href="#!" class="opacity-75 download-link">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" alt="Descargar en Google Play" style="height: 60px; transition: transform 0.3s ease;">
+                            <img class="store-badge" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png" alt="Descargar en Google Play">
                         </a>
                     </div>
                     <p class="opacity-75 small mt-3 reveal">Próximamente disponible</p>
