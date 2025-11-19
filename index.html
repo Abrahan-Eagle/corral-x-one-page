@@ -477,6 +477,17 @@
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
+    <style>
+        /* Clases para reemplazar estilos inline y evitar advertencias */
+        .no-pt { padding-top: 0 !important; }
+        .section-lg { padding: 120px 0; }
+        .section-bg-alt { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+        .max-w-700 { max-width: 700px; margin-left: auto; margin-right: auto; }
+        .cta-inner { position: relative; z-index: 2; }
+        .cta-section { position: relative; padding: 120px 0; }
+        .footer-bg { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 40px 0; }
+        .step-circle { width: 100px; height: 100px; }
+    </style>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -490,7 +501,7 @@
             <a class="navbar-brand" href="#inicio">
                 <img src="https://aiblockweb.com/img/img_renny/LOGO_CORRAL.png" alt="Logo Corral X">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -512,7 +523,7 @@
         </div>
     </nav>
 
-    <div class="position-relative overflow-hidden" style="padding-top: 0;">
+    <div class="position-relative overflow-hidden no-pt">
         <div class="hero-background"></div>
         <!-- Hero Section mejorada -->
         <section id="inicio">
@@ -557,9 +568,9 @@
 
     <main>
         <!-- Características mejoradas -->
-        <section id="caracteristicas" style="padding: 120px 0;">
+        <section id="caracteristicas" class="section-lg">
             <div class="container">
-                <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+                <div class="text-center mx-auto mb-5 max-w-700">
                     <h2 class="fw-bold mb-4 reveal">Todo lo que necesitas para tu negocio ganadero</h2>
                     <p class="text-muted fs-5 reveal">Hemos creado herramientas poderosas y fáciles de usar, pensadas para el ganadero moderno.</p>
                 </div>
@@ -623,9 +634,9 @@
         </section>
 
         <!-- Beneficios Section -->
-        <section id="beneficios" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 120px 0;">
+        <section id="beneficios" class="section-lg section-bg-alt">
              <div class="container">
-                <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+                <div class="text-center mx-auto mb-5 max-w-700">
                     <h2 class="fw-bold mb-4 reveal">Beneficios Clave para Tu Negocio</h2>
                     <p class="text-muted fs-5 reveal">Descubre por qué Corral X es la herramienta definitiva para el ganadero venezolano.</p>
                 </div>
@@ -679,29 +690,29 @@
         </section>
 
         <!-- Cómo funciona mejorado -->
-        <section id="como-funciona" style="padding: 120px 0;">
+        <section id="como-funciona" class="section-lg">
             <div class="container">
-                <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+                <div class="text-center mx-auto mb-5 max-w-700">
                     <h2 class="fw-bold mb-4 reveal">Comprar y Vender Nunca Fue Tan Fácil</h2>
                     <p class="text-muted fs-5 reveal">En solo tres pasos, estarás conectado al mercado ganadero más grande de Venezuela.</p>
                 </div>
                 <div class="row g-5 text-center">
                     <div class="col-md-4 reveal">
-                        <div class="step-circle text-white mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4" style="width: 100px; height: 100px;">
+                        <div class="step-circle text-white mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4">
                             <span class="fs-1 fw-bold">1</span>
                         </div>
                         <h3 class="fs-5 fw-bold mb-3">Crea tu Perfil</h3>
                         <p class="text-muted">Descarga la app, regístrate en minutos y configura tu perfil de comprador o vendedor. ¡Es gratis!</p>
                     </div>
                     <div class="col-md-4 reveal">
-                        <div class="step-circle text-white mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4" style="width: 100px; height: 100px;">
+                        <div class="step-circle text-white mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4">
                             <span class="fs-1 fw-bold">2</span>
                         </div>
                         <h3 class="fs-5 fw-bold mb-3">Explora o Publica</h3>
                         <p class="text-muted">Navega por miles de anuncios o publica tu ganado con fotos y detalles para que otros te encuentren.</p>
                     </div>
                     <div class="col-md-4 reveal">
-                        <div class="step-circle text-white mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4" style="width: 100px; height: 100px;">
+                        <div class="step-circle text-white mx-auto d-flex align-items-center justify-content-center rounded-circle mb-4">
                             <span class="fs-1 fw-bold">3</span>
                         </div>
                         <h3 class="fs-5 fw-bold mb-3">Conecta y Negocia</h3>
@@ -712,9 +723,9 @@
         </section>
 
         <!-- CTA Section mejorada -->
-        <section id="descargar" class="cta-section text-white" style="padding: 120px 0; position: relative;">
-            <div class="container text-center" style="position: relative; z-index: 2;">
-                <div class="mx-auto" style="max-width: 700px;">
+        <section id="descargar" class="cta-section text-white">
+            <div class="container text-center cta-inner">
+                <div class="mx-auto max-w-700">
                     <h2 class="fw-bold mb-4 reveal">Únete a la Comunidad de Corral X Hoy</h2>
                     <p class="opacity-75 mb-5 fs-5 reveal">
                         Sé parte de la revolución ganadera. Descarga la app y transforma la manera en que haces negocios.
@@ -735,7 +746,7 @@
     </main>
 
     <!-- Footer -->
-    <footer style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 40px 0;">
+    <footer class="footer-bg">
         <div class="container text-center">
             <a href="#inicio" class="d-inline-block mb-3">
                 <img id="logo-footer" src="https://aiblockweb.com/img/img_renny/2.png" alt="Logo Corral X">
@@ -754,6 +765,17 @@
     <!-- JavaScript mejorado -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Quitar "/index" o "/index.html" de la URL sin recargar (mejora visual)
+            try {
+                const rxIndex = /(\/index(?:\.html)?)$/i;
+                if (rxIndex.test(window.location.pathname)) {
+                    const newPath = window.location.pathname.replace(rxIndex, '/');
+                    const newUrl = newPath + window.location.search + window.location.hash;
+                    history.replaceState({}, document.title, newUrl);
+                }
+            } catch (err) {
+                // No bloquear si algo falla
+            }
             // Ocultar loading overlay
             setTimeout(() => {
                 const loadingOverlay = document.getElementById('loadingOverlay');
