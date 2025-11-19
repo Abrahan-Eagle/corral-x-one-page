@@ -87,6 +87,7 @@
         .navbar-brand img {
             height: var(--logo-altura-barra);
             transition: transform 0.3s ease;
+            margin-left: 12px; /* Ajuste: mover ligeramente a la derecha */
         }
 
         .navbar-brand:hover img {
@@ -427,6 +428,10 @@
                 max-height: 80px !important;
             }
 
+            .navbar-brand img {
+                margin-left: 8px; /* Menor desplazamiento en móviles */
+            }
+
             .navbar-collapse {
                 position: absolute;
                 top: 100%; left: 0; width: 100%;
@@ -729,12 +734,15 @@
 
     </main>
 
-    <!-- Footer mejorado -->
+    <!-- Footer -->
     <footer style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 40px 0;">
         <div class="container text-center">
-            <a href="#inicio" class="d-inline-block mb-4">
+            <a href="#inicio" class="d-inline-block mb-3">
                 <img id="logo-footer" src="https://aiblockweb.com/img/img_renny/2.png" alt="Logo Corral X">
             </a>
+            <div class="mb-2">
+                <a href="politica-privacidad.html" class="text-decoration-none">Política de Privacidad</a>
+            </div>
             <p class="text-muted mb-2">&copy; 2025 Corral X. Todos los derechos reservados.</p>
             <p class="text-muted small">Hecho con ❤️ para el campo venezolano.</p>
         </div>
