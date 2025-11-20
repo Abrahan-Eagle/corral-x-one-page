@@ -465,7 +465,10 @@ html {
 .section-lg { padding: 120px 0; }
 .section-bg-alt { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
 .max-w-700 { max-width: 700px; margin-left: auto; margin-right: auto; }
+.max-w-900 { max-width: 900px; margin-left: auto; margin-right: auto; }
 .cta-inner { position: relative; z-index: 2; }
 .cta-section { position: relative; padding: 120px 0; }
 .footer-bg { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 40px 0; }
 .step-circle { width: 100px; height: 100px; }
+.logo-navbar { height: 32px; vertical-align: middle; margin-right: 8px; }
+.link-underline { text-decoration: underline !important; }
