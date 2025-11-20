@@ -611,61 +611,6 @@ html {
 .footer-bg { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 40px 0; }
 .step-circle { width: 100px; height: 100px; }
 
-#theme-switcher {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-}
-
-#theme-switcher .sun {
-    display: block;
-}
-
-#theme-switcher .moon {
-    display: none;
-}
-
-body.dark-mode #theme-switcher .sun {
-    display: none;
-}
-
-body.dark-mode #theme-switcher .moon {
-    display: block;
-}
-
-body.dark-mode {
-    --bg-light: #1a1a1a;
-    --text-dark: #F6F5F2;
-    --text-muted: #8F8E7F;
-    --primary-color: #8FB135;
-    --primary-dark: #487531;
-    --primary-light: #8FB135;
-    --accent-color: #8FB135;
-    background-color: #224422;
-    background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2710%27%20height%3D%2710%27%3E%3Crect%20width%3D%2710%27%20height%3D%2710%27%20fill%3D%27%23224422%27%2F%3E%3Cpath%20d%3D%27M-1%201%20l2%20-2%20M0%2010%20l10%20-10%20M9%2011%20l2%20-2%27%20stroke%3D%27%23336633%27%20stroke-width%3D%271%27%20opacity%3D%270.3%27%2F%3E%3C%2Fsvg%3E");
-}
-
-body.dark-mode nav.navbar {
-    background-color: rgba(26, 26, 26, 0.95);
-}
-
-body.dark-mode .feature-card {
-    background: rgba(42, 42, 42, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .section-bg-alt {
-    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-}
-
-body.dark-mode .footer-bg {
-    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-}
-
-body.dark-mode .display-4 {
-    background: linear-gradient(135deg, var(--text-dark), var(--primary-light));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.delete-footer-link {
+  text-decoration: underline;
 }
