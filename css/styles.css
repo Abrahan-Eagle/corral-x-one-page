@@ -1,0 +1,471 @@
+/* Main styles extracted from index.html */
+:root {
+    --logo-altura-barra: 25px; /* Controla el tamaño del logo de la barra de navegación */
+    --logo-altura-footer: 200px; /* <-- Aumenta este valor para hacer más grande el logo del footer */
+    --primary-color: #386A20;
+    --primary-dark: #2a5218;
+    --primary-light: #4a7a30;
+    --accent-color: #7CB342;
+    --bg-light: #FCFCFC;
+    --text-dark: #1a1a1a;
+    --text-muted: #6c757d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden; /* Evita desbordamientos horizontales */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    line-height: 1.6;
+    transform: translateZ(0); /* Fuerza el renderizado inicial correcto */
+}
+
+/* Asegura que ninguna imagen desborde en pantallas pequeñas */
+img { 
+    max-width: 100%; 
+    height: auto; 
+}
+
+/* Animaciones globales */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Navbar mejorada */
+.navbar {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding: 0.75rem 0;
+    min-height: 100px !important;
+    max-height: 100px !important;
+}
+
+.navbar-brand img {
+    height: var(--logo-altura-barra);
+    transition: transform 0.3s ease;
+    margin-left: 12px; /* Ajuste: mover ligeramente a la derecha */
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.1);
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 1rem !important;
+    margin: 0;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 50%;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+    width: 100%;
+    left: 0;
+}
+
+/* Botones mejorados */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border: none;
+    font-weight: 600;
+    padding: 12px 30px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(56, 106, 32, 0.3);
+}
+
+/* Hero section con gradiente animado y parallax */
+#inicio {
+    padding-top: 120px; /* Espacio para la barra de navegación fija */
+    padding-bottom: 60px;
+    display: flex;
+    align-items: center; /* Centra verticalmente el contenido si hay espacio extra */
+    min-height: 65vh; /* Asegura que el título tenga suficiente espacio */
+}
+
+.hero-background {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+    background: linear-gradient(-45deg, #e3f2fd, #f1f8e9, #fff3e0, #fce4ec);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+.hero-background::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(56, 106, 32, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(124, 179, 66, 0.1) 0%, transparent 50%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Badge mejorado */
+.badge-custom {
+    background: linear-gradient(135deg, rgba(56, 106, 32, 0.1), rgba(124, 179, 66, 0.1));
+    color: var(--primary-color);
+    border: 1px solid rgba(56, 106, 32, 0.2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    font-weight: 600;
+    padding: 8px 20px;
+}
+
+/* Título principal con efecto */
+.display-4 {
+    background: linear-gradient(135deg, var(--text-dark), var(--primary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+/* Mockup del teléfono mejorado */
+.phone-mockup-wrapper {
+    max-width: 300px; /* Coincide con el ancho del teléfono para que mx-auto funcione bien */
+}
+.phone-mockup {
+    position: relative;
+    margin: auto;
+    border: 12px solid #1a1a1a;
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    border-radius: 2.5rem;
+    height: 600px;
+    width: 300px;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,.3),
+        0 0 0 1px rgba(255,255,255,.1) inset;
+    animation: float 6s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.phone-screen {
+    border-radius: 1.8rem;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    position: relative;
+}
+
+.phone-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.phone-mockup:hover .phone-screen img {
+    transform: scale(1.05);
+}
+
+/* Cards de características mejoradas con efecto de brillo */
+.feature-card {
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,.15),
+        0 0 0 1px rgba(56, 106, 32, 0.1);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: var(--mouse-y, 50%);
+    left: var(--mouse-x, 50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, transparent 80%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(56, 106, 32, 0.1), rgba(124, 179, 66, 0.1));
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+.feature-card:hover .feature-icon svg {
+    color: white !important;
+}
+
+/* Sección de pasos mejorada */
+.step-circle {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    box-shadow: 0 10px 25px rgba(56, 106, 32, 0.3);
+    transition: all 0.3s ease;
+}
+
+.step-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 35px rgba(56, 106, 32, 0.4);
+}
+
+/* CTA section mejorada */
+.cta-section {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: float 20s linear infinite;
+}
+
+/* Footer mejorado */
+footer {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 15px 0;
+    text-align: center;
+}
+
+footer .container {
+    padding: 0.25rem 0;
+}
+
+#logo-footer {
+    height: var(--logo-altura-footer); /* Usa la variable específica para el footer */
+    transition: transform 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+#logo-footer:hover {
+    transform: scale(1.05);
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+footer .text-muted.small {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+/* Animaciones de scroll mejoradas */
+.reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Efectos de scroll suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Badges de tienda (App Store / Google Play) */
+.store-badge {
+    height: 56px;
+    transition: transform 0.3s ease;
+}
+
+.download-link:hover .store-badge {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .phone-mockup {
+        height: 400px;
+        width: 200px;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+        line-height: 1.3;
+    }
+
+    :root {
+        --logo-altura-barra: 35px;   /* Tamaño ajustado para el logo de la barra en móviles */
+        --logo-altura-footer: 80px;  /* Tamaño ajustado para el logo del footer en móviles */
+    }
+
+    .navbar {
+        padding: 0.5rem 1rem;
+        min-height: 80px !important;
+        max-height: 80px !important;
+    }
+
+    .navbar-brand img {
+        margin-left: 8px; /* Menor desplazamiento en móviles */
+    }
+
+    .navbar-collapse {
+        position: absolute;
+        top: 100%; left: 0; width: 100%;
+        background-color: rgba(255, 255, 255, 0.95);
+        z-index: 1050; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+    }
+
+    #inicio {
+        padding-top: 110px;
+    }
+
+    .store-badge {
+        height: 48px;
+    }
+}
+
+@media (max-width: 576px) {
+    .display-4 {
+        font-size: 1.75rem;
+    }
+
+    .store-badge {
+        height: 44px;
+    }
+}
+
+/* Loading animation */
+.loading-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    z-index: 9999; display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.spinner {
+    width: 60px; height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Utility classes moved from inline usage */
+.no-pt { padding-top: 0 !important; }
+.section-lg { padding: 120px 0; }
+.section-bg-alt { background: linear-gradient(135deg, #f8f9fa, #e9ecef); }
+.max-w-700 { max-width: 700px; margin-left: auto; margin-right: auto; }
+.cta-inner { position: relative; z-index: 2; }
+.cta-section { position: relative; padding: 120px 0; }
+.footer-bg { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 40px 0; }
+.step-circle { width: 100px; height: 100px; }
