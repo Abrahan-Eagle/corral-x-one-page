@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.corralx.app",
+      "sha256_cert_fingerprints":
+        ["59:A9:18:62:98:D6:CB:F6:18:98:F3:07:F6:F0:0D:66:F4:74:4D:05:7A:B7:3F:36:84:C8:C2:95:CC:57:02:0B"]
+    }
+  }
+]
