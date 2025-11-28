@@ -35,13 +35,17 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+}
+
 body {
     font-family: var(--font-main);
     background-color: var(--bg-light);
     color: var(--text-main);
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100%;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
 }
@@ -63,6 +67,8 @@ h6 {
     font-weight: 800;
     background: linear-gradient(135deg, var(--text-main), var(--primary-color));
     -webkit-background-clip: text;
+    background-clip: text;
+    /* Standard property */
     -webkit-text-fill-color: transparent;
     text-shadow: none;
 }
