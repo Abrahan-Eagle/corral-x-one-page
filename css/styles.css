@@ -40,6 +40,8 @@ body {
     background-color: var(--bg-light);
     color: var(--text-main);
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
 }
@@ -77,8 +79,8 @@ h6 {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: -1;
     overflow: hidden;
     background: var(--bg-light);
