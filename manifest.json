@@ -1,7 +1,7 @@
 {
-  "name": "Corral X - Marketplace Ganadero",
+  "name": "Corral X - Marketplace Ganadero de Venezuela",
   "short_name": "Corral X",
-  "description": "La plataforma digital que une a ganaderos de toda Venezuela. Conecta, compra y vende ganado con facilidad.",
+  "description": "Corral X es el marketplace ganadero más grande de Venezuela. Compra y vende ganado bovino, bufalino, equino y porcino. También encuentra equipos de hacienda, maquinaria agrícola, insumos ganaderos y servicios de transporte. Conecta directamente con ganaderos, sin intermediarios. Análisis de mercado con IA, perfiles verificados y chat seguro.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#386A20",
@@ -9,16 +9,17 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "es",
-  "categories": ["business", "lifestyle", "shopping"],
+  "categories": ["business", "shopping", "food", "agriculture"],
+  "keywords": ["ganado", "ganadería", "venezuela", "marketplace", "compra ganado", "vende ganado", "equipos agrícolas", "maquinaria ganadera", "bovinos", "bufalinos", "equinos", "porcinos", "tractores", "ordeñadoras", "insumos ganaderos", "transporte ganadero", "fincas venezuela", "hatos ganaderos"],
   "icons": [
     {
-      "src": "https://aiblockweb.com/img/img_renny/2.png",
+      "src": "assets/Favicon/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://aiblockweb.com/img/img_renny/2.png",
+      "src": "assets/Favicon/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -26,7 +27,7 @@
   ],
   "screenshots": [
     {
-      "src": "https://aiblockweb.com/img/img_renny/photo_5003987846368964265_y.jpg",
+      "src": "assets/images/phone-mockup.jpg",
       "sizes": "1280x720",
       "type": "image/jpeg",
       "form_factor": "wide"
@@ -40,7 +41,7 @@
       "url": "/#descargar",
       "icons": [
         {
-          "src": "https://aiblockweb.com/img/img_renny/2.png",
+          "src": "assets/Favicon/web-app-manifest-192x192.png",
           "sizes": "96x96"
         }
       ]

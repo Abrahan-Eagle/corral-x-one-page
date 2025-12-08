@@ -5,8 +5,8 @@ const urlsToCache = [
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
-  'https://aiblockweb.com/img/img_renny/2.png',
-  'https://aiblockweb.com/img/img_renny/photo_5003987846368964265_y.jpg'
+  '/assets/Favicon/web-app-manifest-192x192.png',
+  '/assets/images/phone-mockup.jpg'
 ];
 
 // Instalación del Service Worker
@@ -96,8 +96,8 @@ function doBackgroundSync() {
 self.addEventListener('push', event => {
   const options = {
     body: event.data ? event.data.text() : '¡Nueva notificación de Corral X!',
-    icon: 'https://aiblockweb.com/img/img_renny/2.png',
-    badge: 'https://aiblockweb.com/img/img_renny/2.png',
+    icon: '/assets/Favicon/web-app-manifest-192x192.png',
+    badge: '/assets/Favicon/web-app-manifest-192x192.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -107,12 +107,12 @@ self.addEventListener('push', event => {
       {
         action: 'explore',
         title: 'Ver más',
-        icon: 'https://aiblockweb.com/img/img_renny/2.png'
+        icon: '/assets/Favicon/web-app-manifest-192x192.png'
       },
       {
         action: 'close',
         title: 'Cerrar',
-        icon: 'https://aiblockweb.com/img/img_renny/2.png'
+        icon: '/assets/Favicon/web-app-manifest-192x192.png'
       }
     ]
   };
