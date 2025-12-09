@@ -24,7 +24,7 @@ jobs:
 
       # Paso 3: Instalar dependencias de Node.js y compilar activos
       - name: Build assets
-        run: npm install && npm run build
+        run: npm install && npm run production
 
       # Paso 4: Instalar PHP y Composer
       - name: Install PHP and Composer
@@ -92,4 +92,4 @@ jobs:
       - name: Verify deployment
         run: |
           echo "Verifying deployment..."
-          curl -f https://backend.corralx.com/api/env-test || echo "API endpoint not accessible"
+          curl -f https://corralx.com/api/env-test || echo "API endpoint not accessible"
