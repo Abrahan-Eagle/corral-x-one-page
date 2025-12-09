@@ -1,0 +1,1200 @@
+---
+description: "Guía de desarrollo Backend (Laravel) para el MVP de Corral X"
+alwaysApply: true
+---
+
+## 🎯 ESTADO ACTUAL DEL PROYECTO
+
+**MVP:** ✅ 100% Completado  
+**Tests Backend:** 155/155 pasando (100%)  
+**Endpoints:** 26/26 operativos  
+**Bugs Críticos:** 0  
+**Última actualización:** Diciembre 2025
+
+---
+
+## REGLAS FUNDAMENTALES DE COLABORACIÓN
+
+**IMPORTANTE: El usuario es el líder del proyecto. El asistente debe:**
+
+1. **SIEMPRE PREGUNTAR** antes de realizar cualquier acción
+2. **NUNCA crear archivos nuevos** si es para editar código existente
+3. **SIEMPRE sugerir detalladamente** qué hacer y esperar aprobación
+4. **NUNCA hacer push a git** sin orden explícita del usuario
+5. **El usuario tiene el mando** - el asistente sugiere, el usuario decide
+
+**Flujo de trabajo:**
+- Asistente: "Sugiero hacer X, ¿quieres que proceda?"
+- Usuario: "Sí, hazlo" o "No, mejor Y"
+- Asistente: Ejecuta solo lo aprobado
+
+---
+
+## Nuevo flujo de pedidos y entrega (sin pagos digitales)
+- El backend debe proporcionar toda la lógica para **coordinar** la transacción, pero **no procesa pagos**. El intercambio económico ocurre fuera de la plataforma cuando comprador y vendedor se encuentran físicamente con el comprobante generado por CorralX.
+- Endpoints mínimos (ver detalles en `README.md` y `CICLO_COMPLETO_LOGIC_DETALLADA.md`):
+  - `POST /api/orders` – Crear pedido desde el chat (status inicial `pending`).
+  - `GET /api/orders`, `GET /api/orders/{id}` – Listar/detallar pedidos (filtros por rol/estado).
+  - `PUT /api/orders/{id}/accept`, `/reject`, `/deliver`, `/cancel` – Transiciones de estado.
+  - `GET /api/orders/{id}/receipt` – Obtener comprobante de venta (JSON con datos completos del encuentro).
+  - `POST /api/orders/{id}/review` – Calificaciones mutuas (comprador: producto + vendedor; vendedor: comprador).
+- **Modelo `Order`**: contener campos para delivery (`delivery_method`, `pickup_location`, `pickup_address`, `delivery_address`, `delivery_cost`, `delivery_provider`, `delivery_tracking_number`), comprobante (`receipt_number`, `receipt_data`), fechas (`expected_pickup_date`, `actual_pickup_date`) y timestamps (`accepted_at`, `delivered_at`, `completed_at`).
+- **Métodos de delivery soportados** (validar en FormRequest):
+  1. `buyer_transport` – comprador lleva su transporte (requiere `pickup_location` y dirección si es “other”).
+  2. `seller_transport` – vendedor entrega (requiere `delivery_address`, costo opcional).
+  3. `external_delivery` – servicio de terceros (requiere `delivery_address`, `delivery_provider`).
+  4. `corralx_delivery` – logística interna (requiere `delivery_address`, `delivery_provider` predefinido).
+- `Order::accept()` debe:
+  - Verificar ownership (el product pertenece al vendedor autenticado).
+  - Generar `receipt_number` único (`CORRALX-{ORDER_ID}-{YYYYMMDD}`).
+  - Llamar `generateReceiptData()` para consolidar datos de vendedor, comprador, finca, delivery, fechas y notas (se usa como contrato operativo en el encuentro físico).
+  - Descontar `product.quantity` y marcar `product.status='sold'` si queda en cero.
+- `markAsDelivered()` solo lo puede ejecutar el comprador; `complete()` se ejecuta automáticamente cuando ambas partes ya enviaron sus reviews.
+- **Controles recomendados (post-MVP, documentados para referencia futura):**
+  - Confirmación dual (vendedor puede validar o disputar la entrega dentro de X horas → estado `under_review`).
+  - Sistema de disputas con evidencias (fotos, notas).
+  - Evidencia de entrega obligatoria para ciertos métodos (subir foto/comprobante firmado).
+  - Métricas por método de delivery para IA Insights.
+  - Notas internas del vendedor (campo privado).
+
+---
+
+## 🔐 Módulo KYC / Verificación de Identidad (MVP Backend)
+
+### Objetivo
+- Proveer un **KYC básico y obligatorio** para el MVP que permita:
+  - Captura y almacenamiento de fotos de:
+    - Documento de identidad (frontal y opcional dorso).
+    - Selfie.
+    - Selfie sosteniendo el documento.
+  - Gestión de un estado simple de verificación:
+    - `no_verified`, `pending`, `verified`, `rejected`.
+- Mantener el diseño actual sin tablas redundantes:
+  - El estado KYC y metadatos mínimos se guardan en la tabla existente de `profiles` (o `users` si se decide explícitamente), no en nuevas tablas complejas.
+  - Para el MVP se prioriza la **Cédula de Identidad venezolana (CI, V-/E-)** como documento de persona y el **RIF** de la hacienda ya capturado en onboarding como identificador fiscal del negocio.
+
+### Diseño de datos (extensión de `profiles`)
+- Añadir una migración que agregue los siguientes campos a `profiles`:
+  - `kyc_status` (string, default `no_verified`).
+    - Valores esperados: `no_verified`, `pending`, `verified`, `rejected`.
+  - `kyc_rejection_reason` (text, nullable).
+  - `kyc_document_type` (string, nullable) – por ejemplo: `dni`, `pasaporte`, `cedula_ve`.
+  - `kyc_document_number` (string, nullable).
+  - `kyc_country_code` (string, nullable, ej. `VE`, `CO`).
+  - Paths de imágenes (todas `nullable`):
+    - `kyc_doc_front_path` (string).
+    - `kyc_doc_back_path` (string).
+    - `kyc_selfie_path` (string).
+    - `kyc_selfie_with_doc_path` (string).
+  - Opcional a futuro:
+    - `kyc_verified_at` (timestamp, nullable).
+- En el modelo `Profile`:
+  - Método helper sugerido:
+    ```php
+    public function isKycVerified(): bool
+    {
+        return $this->kyc_status === 'verified';
+    }
+    ```
+
+### Endpoints KYC (API REST)
+- Namespace sugerido: `KycController` en `app/Http/Controllers/Profiles/` (o un namespace dedicado `Security/` según se acuerde).
+- Todas las rutas KYC deben ir bajo middleware `auth:sanctum`.
+- Endpoints mínimos:
+  - `GET  /api/kyc/status`
+    - Devuelve al menos:
+      - `kyc_status`
+      - `kyc_rejection_reason`
+      - `has_document`, `has_selfie`, `has_selfie_with_doc`
+      - Opcional: `kyc_document_type`, `kyc_country_code`, versión enmascarada de `kyc_document_number`.
+  - `POST /api/kyc/start`
+    - Inicializa o reinicia el flujo KYC:
+      - Si `kyc_status` es `no_verified` o `rejected`, pasa a `pending`.
+      - Puede recibir y guardar `document_type`, `document_number`, `country_code` si se desea capturar aquí.
+  - `POST /api/kyc/upload-document`
+    - Request (multipart):
+      - `front`: imagen requerida.
+      - `back`: imagen opcional.
+      - Opcionales: `document_type`, `document_number`, `country_code` (si no se enviaron en `/start`).
+    - Guarda archivos en `storage/app/public/kyc/{profile_id}/doc_front.jpg` y `doc_back.jpg`.
+    - Actualiza los paths y deja `kyc_status` en `pending`.
+  - `POST /api/kyc/upload-selfie`
+    - Request (multipart):
+      - `selfie`: imagen requerida.
+    - Guarda en `storage/app/public/kyc/{profile_id}/selfie.jpg`.
+    - Actualiza `kyc_selfie_path`.
+  - `POST /api/kyc/upload-selfie-with-doc`
+    - Request (multipart):
+      - `selfie_with_doc`: imagen requerida.
+    - Guarda en `storage/app/public/kyc/{profile_id}/selfie_with_doc.jpg`.
+    - Actualiza `kyc_selfie_with_doc_path`.
+
+### Validaciones y seguridad KYC
+- Validación de archivos:
+  - `image|mimes:jpeg,png,jpg|max:5120` (5 MB).
+  - Rechazar si el archivo requerido no está presente.
+- Acceso:
+  - Solo el usuario autenticado puede subir/ver su propia información KYC.
+  - No exponer rutas internas sin necesidad; preferir URLs completas cuando se envíen al frontend.
+- Datos sensibles:
+  - Evitar devolver `kyc_document_number` completo en las respuestas generales; usar máscaras cuando sea necesario.
+
+### Flujo de revisión y aprobación (MVP)
+- Fase 1 (MVP): revisión **manual**, sin IA/OCR:
+  - Un admin revisa las imágenes KYC en un panel simple (o vía herramientas internas).
+  - Al aprobar/rechazar:
+    - `kyc_status = 'verified'` o `kyc_status = 'rejected'`.
+    - Si se rechaza, llenar `kyc_rejection_reason` con un mensaje claro para el usuario.
+  - Esta lógica puede vivir inicialmente en un controlador/admin simple o comandos de mantenimiento; el detalle de UI admin se puede posponer.
+
+### Evolución: KYC automático con IA (plan)
+- Objetivo a corto/mediano plazo: que la decisión KYC sea **automática por defecto**, usando:
+  - Datos estructurados ya disponibles (CI, RIF, perfil, haciendas).
+  - Resultados de OCR (actualmente en el frontend) y reglas locales en backend.
+  - Opcionalmente, un evaluador IA basado en **Gemini** para casos dudosos.
+- Servicio sugerido:
+  - `KycEvaluationService` (o similar) que reciba un “paquete KYC” con:
+    - Datos de perfil (`first_name`, `last_name`, `ci_number`, fecha de nacimiento, etc.).
+    - Datos del RIF (`rifNumber`, `businessName`, `address`).
+    - Metadatos de archivos (`kyc_doc_front_path`, `kyc_selfie_path`, `kyc_selfie_with_doc_path`).
+  - Aplica validaciones locales (formatos, coherencia persona–negocio) y, si está configurada `GOOGLE_GEN_AI_KEY`, llama a Gemini para obtener:
+    - `decision`: `verified`, `rejected` o `pending`.
+    - `reasons`: lista de mensajes claros para el usuario/log.
+  - Escribe la decisión final en `profiles.kyc_status` y `profiles.kyc_rejection_reason`.
+- Restricciones de servicios:
+  - No se añaden nuevos proveedores pagos de visión/biometría (AWS Rekognition, Vision API, etc.) en este plan.
+  - Gemini se usa únicamente como **motor de evaluación sobre datos ya extraídos**, nunca como reemplazo directo de OCR ni recibiendo imágenes crudas desde el frontend.
+
+### Contrato con Frontend (User / Profile endpoints)
+- El endpoint que alimenta `UserProvider.getUserDetails()` en frontend debe incluir:
+  - `kyc_status`
+  - `kyc_rejection_reason`
+  - Opcional: `kyc_document_type`, `kyc_country_code`.
+- El endpoint `/api/profile` también puede exponer estos campos cuando se vea el perfil propio, para que `ProfileScreen` muestre el estado de verificación.
+
+### Reglas de negocio relacionadas con KYC (backend)
+- **Crear productos (`POST /api/products`)**:
+  - Además de las validaciones actuales de ownership y ranch:
+    - Es obligatorio exigir que el usuario tenga `profile.kyc_status === 'verified'` para publicar.
+    - Se debe asumir que el `RIF` de la hacienda principal ya fue capturado y validado durante el onboarding (OnboardingPage2 + validaciones actuales de `tax_id` en backend).
+  - Si la verificación es obligatoria para publicar:
+    - Responder con `403` o `422` y un mensaje claro:  
+      “Debes completar la verificación de identidad (KYC) antes de publicar productos.”
+- Otros endpoints sensibles se pueden endurecer en fases posteriores reutilizando `Profile::isKycVerified()` en policies o middleware específicos.
+
+---
+
+## 📁 Estructura de Carpetas y Convenciones
+
+### Controladores
+- **Ubicación:** `app/Http/Controllers`
+- **Nomenclatura:** Singular + sufijo `Controller` (ej: `ProductController`)
+- **Organización:** Por funcionalidad en subdirectorios
+  - `Authenticator/AuthController.php`
+  - `Profiles/ProfileController.php`
+  - `Profiles/RanchController.php`
+  - `Marketplace/ProductController.php`
+  - `ChatController.php`
+
+### Modelos
+- **Ubicación:** `app/Models`
+- **Nomenclatura:** Singular PascalCase (ej: `Product`, `Ranch`)
+- **Convención:** Eloquent deduce tabla plural (Product → products)
+- **Relaciones:** Siempre definir en ambos lados (hasMany ↔ belongsTo)
+
+### Factories y Seeders
+- ✅ **COMPLETADO:** Todos los factories con datos del mercado venezolano
+- ✅ **COMPLETADO:** Seeders con 683 países, 4,528 estados, 47,123 ciudades, 432 parroquias de Venezuela
+- **Factories:** `database/factories/{Model}Factory.php`
+- **Seeders:** `database/seeders/{Entity}Seeder.php`
+- **Datos realistas:** Razas venezolanas, ubicaciones reales, nombres de haciendas típicos
+
+### Tests
+- **Feature Tests:** `tests/Feature/{Module}ApiTest.php`
+- **Unit Tests:** `tests/Unit/{Model}Test.php`
+- **Estado actual:** 27/27 tests pasando (100%)
+
+---
+
+## 🛣️ Rutas y Endpoints (API REST)
+
+### Autenticación (`/api/auth/*`)
+```php
+POST   /api/auth/register           # Registro + token Sanctum
+POST   /api/auth/login              # Login + token
+POST   /api/auth/google             # Google OAuth
+POST   /api/auth/logout (auth)      # Cierra sesión
+GET    /api/auth/user (auth)        # Usuario actual
+PUT    /api/auth/user (auth)        # Actualizar usuario
+PUT    /api/auth/password (auth)    # Cambiar contraseña
+```
+
+### Perfiles (`/api/profile*`, `/api/profiles/*`)
+```php
+# Perfil propio (auth)
+GET    /api/profile                 # Mi perfil completo con relaciones
+PUT    /api/profile                 # Actualizar (firstName, lastName, bio, etc.)
+POST   /api/profile/photo           # Subir foto (multipart) ✅ Endpoint dedicado
+
+# Perfil público
+GET    /api/profiles/{id}           # Ver perfil de otro usuario (limitado)
+
+# Recursos del usuario
+GET    /api/me/products              # Mis productos
+GET    /api/me/ranches               # Mis haciendas
+GET    /api/me/metrics               # Métricas agregadas
+
+# Recursos públicos
+GET    /api/profiles/{id}/ranches   # Haciendas de un perfil (público)
+```
+
+### Haciendas (`/api/ranches/*`)
+```php
+GET    /api/ranches                 # Listar con filtros
+POST   /api/ranches (auth)          # Crear hacienda
+GET    /api/ranches/{id}            # Ver detalle
+PUT    /api/ranches/{id} (auth)     # Actualizar (solo owner) ✅
+DELETE /api/ranches/{id} (auth)     # Eliminar (solo owner, con validaciones) ✅
+```
+
+**Validaciones DELETE ranches:**
+- ✅ No eliminar hacienda con productos activos
+- ✅ No eliminar la única hacienda del perfil
+- ✅ Auto-promoción de otra hacienda como primary
+- ✅ Soft delete (recuperable)
+
+### Productos (`/api/products/*`)
+```php
+# Públicos
+GET    /api/products                # Listar con filtros avanzados
+GET    /api/products/{id}           # Detalle (incrementa views si no es owner)
+
+# Protegidos (auth)
+POST   /api/products                # Crear producto
+PUT    /api/products/{id}           # Actualizar (solo owner del ranch)
+DELETE /api/products/{id}           # Eliminar (solo owner del ranch)
+```
+
+**Filtros GET /api/products:**
+- `type`, `breed`, `sex`, `purpose`, `weight_min`, `weight_max`
+- `is_vaccinated`, `delivery_method`, `negotiable`, `status`
+- `per_page` (default: 20)
+
+### Chat (`/api/chat/*`) (auth)
+```php
+GET    /api/chat/conversations                  # Mis conversaciones
+POST   /api/chat/conversations                  # Crear/iniciar chat
+GET    /api/chat/conversations/{id}/messages    # Historial
+POST   /api/chat/conversations/{id}/messages    # Enviar mensaje
+POST   /api/chat/conversations/{id}/read        # Marcar leídos
+DELETE /api/chat/conversations/{id}             # Eliminar conversación
+```
+
+### Favoritos y Reseñas
+```php
+POST   /api/products/{id}/favorite              # Toggle favorito
+DELETE /api/products/{id}/favorite
+GET    /api/products/{id}/reviews               # Reseñas del producto
+POST   /api/products/{id}/reviews               # Crear reseña
+GET    /api/ranches/{id}/reviews                # Reseñas de hacienda
+```
+
+### Reportes
+```php
+POST   /api/reports (auth)          # Reportar (polimórfico)
+GET    /api/reports (auth)          # Mis reportes
+GET    /api/admin/reports (admin)   # Pendientes (moderación)
+```
+
+---
+
+## 🗄️ Modelos, Relaciones y Lógica de Negocio
+
+### User (Autenticación)
+```php
+// Campos
+id, name, email, password, google_id, role, completed_onboarding
+
+// Relaciones
+hasOne(Profile::class)
+
+// Lógica
+- Solo autenticación, datos personales en Profile
+```
+
+### Profile (Datos Personales + Marketplace)
+```php
+// Campos clave
+firstName, middleName, lastName, secondLastName
+bio (≤500 caracteres) ✅
+photo_users, date_of_birth, marital_status, sex, ci_number
+user_type, is_verified, rating, ratings_count
+accepts_calls, accepts_whatsapp, accepts_emails, whatsapp_number
+
+// Relaciones
+belongsTo(User::class)
+hasMany(Ranch::class)
+hasMany(Address::class)
+hasMany(Phone::class)
+hasOne(CiDocument::class)
+
+// Métodos útiles
+public function isVerified(): bool
+public function fullName(): string
+```
+
+### Ranch (Haciendas)
+```php
+// Campos clave
+name, legal_name, tax_id
+business_description (≤1000)
+specialization, certifications (json)
+contact_hours, delivery_policy, return_policy
+is_primary ✅ auto-gestionado
+accepts_orders, min_order_amount, max_delivery_distance_km
+avg_rating, total_sales, last_sale_at
+
+// Relaciones
+belongsTo(Profile::class)
+hasMany(Product::class)
+hasOne(Address::class)
+hasOne(Phone::class)
+hasOne(RifDocument::class)
+
+// Lógica de negocio ✅
+- Al eliminar: verificar no tiene productos activos
+- Al eliminar: verificar no es la única hacienda
+- Al eliminar primary: auto-promover otra hacienda
+- Soft delete (recuperable)
+```
+
+### Product (Ganado/Productos)
+```php
+// Campos clave
+title, description, type, breed
+age_months, quantity, price, currency
+weight_avg_kg, weight_min_kg, weight_max_kg
+sex, purpose, is_vaccinated
+delivery_method, delivery_cost, delivery_radius_km
+negotiable, status, views_count
+
+// Relaciones
+belongsTo(Ranch::class)
+hasMany(ProductImage::class)
+hasMany(Favorite::class)
+hasMany(Review::class)
+belongsToMany(Category::class)
+
+// Lógica
+- views_count se incrementa en show() si no es owner
+- status por default: 'active'
+- Validación: ranch_id debe pertenecer al profile del usuario
+```
+
+### Advertisement (Sistema de Publicidad) - ✅ IMPLEMENTADO
+```php
+// Campos clave
+type (enum: 'sponsored_product', 'external_ad')
+title, description (nullable)
+image_url (requerido)
+target_url (nullable) // URL destino al hacer click
+is_active (boolean)
+start_date (datetime)
+end_date (datetime, nullable) // Si pasa, se desactiva automáticamente
+priority (int: orden de prioridad si hay múltiples)
+clicks (int: contador de clicks)
+impressions (int: contador de visualizaciones)
+created_by (admin user_id)
+
+// Campos específicos por tipo
+product_id (nullable, si type = 'sponsored_product')
+advertiser_name (nullable, si type = 'external_ad')
+
+// Relaciones
+belongsTo(Product::class, 'product_id') // Si es sponsored_product
+belongsTo(User::class, 'created_by') // Admin que crea
+
+// Lógica de negocio
+- Validación automática de fechas: solo mostrar si is_active = true AND start_date <= NOW() AND (end_date IS NULL OR end_date >= NOW())
+- Desactivación automática cuando end_date pasa (se valida en cada consulta)
+- Productos patrocinados pueden aparecer duplicados (como patrocinado y en listado normal)
+- Modelo Unificado con Prioridad (similar a Instagram):
+  * Alta prioridad (priority > 50): Aparecen primero, intercalados con productos (2-3 anuncios, luego 1-2 productos)
+  * Baja prioridad (priority <= 50): Mezclados equitativamente con productos normales
+  * Rotación aleatoria dentro de cada nivel de prioridad (variación ±20% en prioridad)
+  * Cada refresh genera un orden diferente
+- Solo admin puede crear/editar/eliminar anuncios (verificar con `auth()->user()->isAdmin()` o `auth()->user()->role === 'admin'`)
+- Tracking: incrementar impressions al mostrar en frontend, clicks al hacer click
+- Publicidad externa: al hacer click, redirige a target_url en navegador externo
+```
+
+**Tipos de publicidad:**
+1. **sponsored_product**: Producto existente que se promociona pagando
+   - Requiere `product_id` válido
+   - El producto debe estar activo (`status = 'active'`)
+   - Se muestra como ProductCard con badge "Patrocinado"
+   - Puede aparecer duplicado (patrocinado + listado normal)
+
+2. **external_ad**: Publicidad de terceros (ej: Toyota, proveedores)
+   - No requiere `product_id`
+   - Requiere `advertiser_name` (nombre del anunciante)
+   - `target_url` generalmente apunta a sitio externo
+   - Se muestra como banner clickeable
+
+**Posicionamiento - Modelo Unificado con Prioridad:**
+- **Alta prioridad** (`priority > 50`): Aparecen primero, intercalados con productos normales
+  - Intercalación: 2-3 anuncios de alta prioridad, luego 1-2 productos normales/baja prioridad
+  - Rotación aleatoria dentro del grupo (variación ±20% en prioridad para evitar orden fijo)
+- **Baja prioridad** (`priority <= 50`): Mezclados equitativamente con productos normales
+  - Shuffle aleatorio completo entre productos y anuncios de baja prioridad
+- Rotación aleatoria cada vez que se carga/refresca el marketplace
+- No hay posiciones fijas (top/middle/bottom eliminadas)
+- El frontend mezcla productos + anuncios según prioridad y luego aplica rotación aleatoria
+- Publicidad externa: al hacer click, redirige a `target_url` en navegador externo
+
+### Conversation (Chat)
+```php
+// Campos
+profile_id_1, profile_id_2 (participantes)
+product_id (opcional, si chat inició por producto)
+ranch_id (opcional)
+last_message_at, is_active
+
+// Relaciones
+hasMany(Message::class)
+belongsTo(Profile::class, 'profile_id_1')
+belongsTo(Profile::class, 'profile_id_2')
+
+// Lógica
+- Al enviar primer mensaje: crear Conversation
+- Actualizar last_message_at en cada mensaje
+```
+
+### Message
+```php
+// Campos
+conversation_id, sender_id
+content (≤2000), message_type, attachment_url
+read_at
+
+// Relaciones
+belongsTo(Conversation::class)
+belongsTo(Profile::class, 'sender_id')
+
+// Lógica
+- Broadcast por WebSocket al guardar
+- Marcar read_at al abrir conversación
+```
+
+---
+
+## ✅ Validaciones (Backend)
+
+### Productos
+```php
+$request->validate([
+    'ranch_id' => 'required|exists:ranches,id',
+    'title' => 'required|string|max:200',
+    'description' => 'required|string|max:2000',
+    'type' => 'required|in:cattle,equipment,feed,other',
+    'breed' => 'required|string|max:100',
+    'age_months' => 'nullable|integer|min:0|max:360',
+    'quantity' => 'required|integer|min:1|max:10000',
+    'price' => 'required|numeric|min:0',
+    'currency' => 'required|in:USD,VES',
+    'weight_avg_kg' => 'nullable|numeric|min:0|max:2000',
+    'sex' => 'nullable|in:male,female,mixed',
+    'purpose' => 'nullable|in:breeding,meat,dairy,mixed',
+    'is_vaccinated' => 'nullable|boolean',
+    'delivery_method' => 'required|in:pickup,delivery,both',
+    'negotiable' => 'nullable|boolean',
+    'status' => 'nullable|in:active,paused,sold,expired',
+]);
+
+// Validación adicional: ownership
+if ($ranch->profile_id !== auth()->user()->profile->id) {
+    abort(403, 'No tienes permiso para publicar en esta hacienda');
+}
+```
+
+### Perfiles
+```php
+$request->validate([
+    'first_name' => 'nullable|string|max:100',
+    'middle_name' => 'nullable|string|max:100',
+    'last_name' => 'nullable|string|max:100',
+    'second_last_name' => 'nullable|string|max:100',
+    'bio' => 'nullable|string|max:500',  // ✅
+    'date_of_birth' => 'nullable|date',
+    'marital_status' => 'nullable|in:married,divorced,single',
+    'sex' => 'nullable|in:F,M',
+    'ci_number' => 'nullable|string|max:20',
+    'accepts_calls' => 'nullable|boolean',
+    'accepts_whatsapp' => 'nullable|boolean',
+    'accepts_emails' => 'nullable|boolean',
+    'whatsapp_number' => 'nullable|string|max:20',
+]);
+```
+
+### Fotos de Perfil
+```php
+$request->validate([
+    'photo_users' => 'required|image|mimes:jpeg,png,jpg|max:5120', // 5MB
+]);
+
+// Procesamiento
+$path = $request->file('photo_users')->store('profile_images', 'public');
+$photoUrl = config('app.url') . '/storage/' . $path;
+```
+
+### Haciendas
+```php
+$request->validate([
+    'name' => 'required|string|max:200',
+    'legal_name' => 'nullable|string|max:200',
+    'tax_id' => 'nullable|string|max:50',
+    'business_description' => 'nullable|string|max:1000',
+    'is_primary' => 'nullable|boolean',
+    // ... más campos
+]);
+
+// Validación DELETE
+- No eliminar si tiene productos activos
+- No eliminar la única hacienda
+- Auto-promover otra si se elimina la primary
+```
+
+### Chat
+```php
+$request->validate([
+    'content' => 'required|string|max:2000',
+    'message_type' => 'nullable|in:text,image,video,document',
+]);
+
+// Validación: usuario es participante
+if (!in_array(auth()->user()->profile->id, [$conv->profile_id_1, $conv->profile_id_2])) {
+    abort(403);
+}
+```
+
+### Advertisements (Publicidad) - ✅ IMPLEMENTADO
+```php
+// Validación básica
+$request->validate([
+    'type' => 'required|in:sponsored_product,external_ad',
+    'title' => 'required|string|max:200',
+    'description' => 'nullable|string|max:1000',
+    'image_url' => 'required|url|max:500',
+    'target_url' => 'nullable|url|max:500',
+    'start_date' => 'required|date',
+    'end_date' => 'nullable|date|after:start_date',
+    'is_active' => 'nullable|boolean',
+    'priority' => 'nullable|integer|min:0|max:100',
+    // Campos específicos por tipo
+    'product_id' => 'required_if:type,sponsored_product|nullable|exists:products,id',
+    'advertiser_name' => 'required_if:type,external_ad|nullable|string|max:200',
+]);
+
+// Validación de admin
+if (!auth()->user()->isAdmin()) {
+    abort(403, 'Solo administradores pueden gestionar anuncios');
+}
+
+// Validación específica para sponsored_product
+if ($request->type === 'sponsored_product') {
+    $product = Product::find($request->product_id);
+    if (!$product || $product->status !== 'active') {
+        abort(422, 'El producto debe estar activo');
+    }
+}
+
+// Validación de fechas en consulta de anuncios activos
+$advertisements = Advertisement::where('is_active', true)
+    ->where('start_date', '<=', now())
+    ->where(function($query) {
+        $query->whereNull('end_date')
+              ->orWhere('end_date', '>=', now());
+    })
+    ->get();
+```
+
+---
+
+## 🔐 Políticas de Acceso y Middleware
+
+### Middleware Aplicados
+```php
+// Autenticación (Sanctum)
+Route::middleware('auth:sanctum')->group(function () {
+    // Rutas protegidas
+});
+
+// Rate Limiting
+Route::middleware('throttle:60,1')->group(...);  // Global
+Route::middleware('throttle:30,1')->group(...);  // Chat
+```
+
+### Políticas (Policies)
+  ```php
+// ProductPolicy
+public function update(User $user, Product $product): bool {
+    return $product->ranch->profile_id === $user->profile->id;
+}
+
+// RanchPolicy ✅
+public function update(User $user, Ranch $ranch): bool {
+    return $ranch->profile_id === $user->profile->id;
+}
+
+public function delete(User $user, Ranch $ranch): bool {
+    // Verificar ownership
+    // Verificar no tiene productos activos
+    // Verificar no es la única hacienda
+    return true;
+}
+
+// ConversationPolicy
+public function view(User $user, Conversation $conversation): bool {
+    return in_array($user->profile->id, [
+        $conversation->profile_id_1,
+        $conversation->profile_id_2
+    ]);
+}
+```
+
+---
+
+## ✅ Estado Actual MVP (Controladores y Endpoints)
+
+### Controladores Activos
+```
+✅ AuthController          (7 endpoints)
+✅ ProfileController        (8 endpoints)
+✅ RanchController          (5 endpoints) - CRUD completo ✅
+✅ ProductController        (5 endpoints)
+✅ ChatController           (6 endpoints)
+✅ FavoriteController
+✅ ReviewController
+✅ ReportController
+```
+
+### Endpoints Verificados (17/17) ✅
+
+#### Auth
+- POST `/api/auth/register`, `/api/auth/login`, `/api/auth/google`
+- POST `/api/auth/logout` (auth)
+- GET `/api/auth/user`, PUT `/api/auth/user`, PUT `/api/auth/password` (auth)
+
+#### Profiles (auth)
+- GET `/api/profile`, PUT `/api/profile`
+- POST `/api/profile/photo` ✅ (multipart dedicado)
+- GET `/api/profiles/{id}` (público)
+- GET `/api/me/products`, `/api/me/ranches`, `/api/me/metrics`
+- GET `/api/profiles/{id}/ranches` (público)
+
+#### Ranches (auth)
+- GET `/api/ranches`, POST `/api/ranches`
+- GET `/api/ranches/{id}`
+- PUT `/api/ranches/{id}` ✅ (ownership + validaciones)
+- DELETE `/api/ranches/{id}` ✅ (validaciones estrictas)
+
+#### Products
+- GET `/api/products` (público con filtros), GET `/api/products/{id}`
+- POST `/api/products` (auth), PUT `/api/products/{id}` (auth), DELETE `/api/products/{id}` (auth)
+
+#### Advertisements (admin) - ✅ IMPLEMENTADO
+- GET    /api/advertisements              # Listar anuncios (admin)
+- GET    /api/advertisements/active       # Obtener anuncios activos (público, para marketplace)
+- POST   /api/advertisements              # Crear anuncio (admin)
+- GET    /api/advertisements/{id}         # Ver detalle (admin)
+- PUT    /api/advertisements/{id}         # Actualizar (admin)
+- DELETE /api/advertisements/{id}         # Eliminar (admin)
+- POST   /api/advertisements/{id}/click   # Registrar click (público, tracking)
+
+**Nota:** El endpoint `/api/products` NO se modifica. El frontend hace 2 llamadas:
+1. GET /api/products (productos normales - sin cambios)
+2. GET /api/advertisements/active (anuncios activos)
+3. Frontend mezcla según Modelo Unificado con Prioridad:
+   - Alta prioridad (priority > 50): Aparecen primero, intercalados (2-3 anuncios, luego 1-2 productos)
+   - Baja prioridad (priority <= 50): Mezclados equitativamente con productos normales
+   - Rotación aleatoria dentro de cada nivel de prioridad
+
+#### Chat (auth)
+- GET `/api/chat/conversations`, POST `/api/chat/conversations`
+- GET `/api/chat/conversations/{id}/messages`, POST `/api/chat/conversations/{id}/messages`
+- POST `/api/chat/conversations/{id}/read`, DELETE `/api/chat/conversations/{id}`
+
+---
+
+## 🧪 Testing - Estado Actual
+
+### Tests Implementados: 27/27 (100% PASANDO)
+
+#### ProfileApiTest.php (17 tests - 48 aserciones)
+```php
+✅ can_get_my_profile_when_authenticated
+✅ cannot_get_profile_when_not_authenticated
+✅ returns_404_when_user_has_no_profile
+✅ can_update_my_profile
+✅ bio_cannot_exceed_500_characters  // ✅ Bio validada
+✅ can_upload_profile_photo          // ✅ Endpoint POST dedicado
+✅ photo_upload_requires_authentication
+✅ photo_must_be_valid_image
+✅ can_get_public_profile_by_id
+✅ returns_404_for_nonexistent_public_profile
+✅ can_get_my_products
+✅ my_products_returns_empty_array_when_no_products
+✅ can_get_my_ranches
+✅ can_get_my_metrics
+✅ metrics_returns_zeros_when_no_data
+✅ can_get_ranches_by_profile_id
+✅ ranches_by_profile_returns_empty_when_none
+```
+
+#### RanchApiTest.php (10 tests - 23 aserciones) ✅ NUEVO
+```php
+✅ can_update_my_ranch
+✅ cannot_update_ranch_i_do_not_own
+✅ update_requires_authentication
+✅ marking_ranch_as_primary_unmarks_others
+✅ can_delete_ranch_without_active_products
+✅ cannot_delete_ranch_with_active_products     // ✅ Validación crítica
+✅ cannot_delete_the_only_ranch                 // ✅ Validación crítica
+✅ cannot_delete_ranch_i_do_not_own
+✅ delete_requires_authentication
+✅ deleting_primary_ranch_promotes_another      // ✅ Auto-promoción
+```
+
+### Ejecutar Tests
+```bash
+# Todos los tests
+php artisan test
+
+# Tests específicos
+php artisan test --filter=ProfileApiTest
+php artisan test --filter=RanchApiTest
+
+# Con cobertura
+php artisan test --coverage
+```
+
+---
+
+## 🔥 Features Implementados (MVP)
+
+### 1. Sistema de Perfiles ✅ 100%
+**Funcionalidades completadas:**
+- Ver perfil propio con toda la información
+- Editar datos personales (nombres, bio, CI, preferencias)
+- Subir foto de perfil (endpoint POST dedicado)
+- Ver perfil público de vendedores
+- Métricas agregadas (productos, vistas, favoritos)
+- Bio personalizada (≤500 caracteres)
+- Email/WhatsApp visibles en perfil propio
+- Verificación con badge visual
+
+**Tests:** 17/17 ✅
+
+### 2. Sistema de Haciendas ✅ 100% CRUD Completo
+**Funcionalidades completadas:**
+- Crear hacienda (onboarding)
+- Ver mis haciendas
+- Ver haciendas de vendedor (público)
+- **Actualizar hacienda (nombre, RIF, políticas)** ✅ NUEVO
+- **Eliminar hacienda (con validaciones)** ✅ NUEVO
+- Auto-gestión de hacienda principal (is_primary)
+
+**Validaciones críticas:**
+- ✅ No eliminar hacienda con productos activos
+- ✅ No eliminar la única hacienda del perfil
+- ✅ Al eliminar primary, otra se marca automáticamente
+- ✅ Al marcar como primary, las demás se desmarcan
+- ✅ Ownership estricto (solo owner puede editar/eliminar)
+
+**Tests:** 10/10 ✅
+
+### 3. Sistema de Productos
+**Funcionalidades:**
+- Marketplace con filtros avanzados
+- Detalle con incremento de vistas
+- Crear producto (validación de ownership del ranch)
+- Actualizar producto
+- Eliminar producto
+- Múltiples imágenes (hasta 10)
+
+**Validaciones:**
+- Ranch debe pertenecer al usuario
+- Enums validados (type, breed, sex, purpose, delivery_method, status)
+- Ownership verificado en update/destroy
+
+### 4. Sistema de Chat (1:1)
+**Funcionalidades:**
+- Conversaciones entre usuarios
+- Mensajes con timestamps
+- Marcar como leído
+- Contexto de producto/ranch (opcional)
+- Rate-limit anti-spam
+
+**Pendiente:**
+- WebSocket en tiempo real (HTTP funcional)
+
+### 5. Sistema de Publicidad (Marketplace) - ✅ IMPLEMENTADO
+**Funcionalidades:**
+- Productos patrocinados (sponsored_product)
+- Publicidad externa de terceros (external_ad)
+- Modelo Unificado con Prioridad (similar a Instagram)
+- Desactivación automática por fecha de expiración
+- Tracking de clicks e impressions
+- Gestión exclusiva por admin
+
+**Validaciones:**
+- Solo admin puede crear/editar/eliminar anuncios (usar `auth()->user()->isAdmin()` o verificar `role === 'admin'`)
+- sponsored_product requiere product_id válido y producto activo
+- external_ad requiere advertiser_name
+- Todos requieren image_url válido
+- Validación automática de fechas (start_date, end_date)
+- Si end_date pasa, anuncio se desactiva automáticamente
+- Campo priority (0-100) determina orden de aparición
+
+**Verificación de Admin:**
+- Modelo User tiene método `isAdmin()`: `return $this->role === 'admin'`
+- En controladores: `auth()->user()->isAdmin()` o `auth()->user()->role === 'admin'`
+- Roles disponibles: 'admin', 'users', 'commerce', 'delivery'
+
+**Lógica de negocio - Modelo Unificado con Prioridad:**
+- **Alta prioridad** (`priority > 50`): Aparecen primero, intercalados con productos
+  - Intercalación: 2-3 anuncios de alta prioridad, luego 1-2 productos normales/baja prioridad
+  - Rotación aleatoria dentro del grupo (variación ±20% en prioridad)
+- **Baja prioridad** (`priority <= 50`): Mezclados equitativamente con productos normales
+  - Shuffle aleatorio completo entre productos y anuncios de baja prioridad
+- Productos patrocinados pueden aparecer duplicados (como producto normal y como anuncio patrocinado)
+- Publicidad externa: al hacer click, redirige a `target_url` en navegador externo
+- Validación automática: solo mostrar anuncios activos y dentro de rango de fechas
+- Cada refresh del marketplace genera un orden diferente
+- Incrementar impressions al mostrar en frontend, clicks al hacer click
+- El frontend hace 2 llamadas separadas y mezcla los resultados
+- El endpoint `/api/products` se mantiene intacto (sin modificaciones)
+
+---
+
+## 🔧 Configuración .env
+
+### Variables Críticas
+```env
+# App
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=http://192.168.27.12:8000           # ✅ IP correcta
+APP_URL_LOCAL=http://192.168.27.12:8000     # ✅ Para desarrollo
+APP_URL_PRODUCTION=https://backend.corralx.com
+
+# Base de datos
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=corralx
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Storage
+FILESYSTEM_DISK=public
+
+# Sanctum
+SANCTUM_STATEFUL_DOMAINS=localhost:3000,192.168.27.3
+SESSION_DOMAIN=.corralx.com
+```
+
+**IMPORTANTE:** 
+- `APP_URL` debe coincidir con la IP donde corre el servidor
+- Usar `0.0.0.0` en `php artisan serve --host=0.0.0.0` para aceptar conexiones de red
+- Verificar firewall permite puerto 8000
+
+---
+
+## 🗃️ Sistema de Ubicaciones Geográficas
+
+### Datos Completos
+- **Países:** 683 con códigos ISO y prefijos telefónicos
+- **Estados:** 4,528 organizados por país
+- **Ciudades:** 47,123 organizadas por estado
+- **Parroquias:** 436 (432 de Venezuela específicamente)
+
+### Venezuela
+- **Estados:** 24 (IDs: 4020-4043)
+- **Ciudades:** 117
+- **Parroquias:** 432 organizadas por municipio
+- **Códigos de operadora:** 30 códigos venezolanos
+
+### Uso
+```php
+// Selects anidados en frontend
+Country → State → City → Parish
+
+// Seeders
+CountriesSeeder, StatesSeeder, CitiesSeeder, ParishesSeeder
+```
+
+---
+
+## 🚀 Comandos Operativos
+
+### Desarrollo
+```bash
+# Migrar y poblar
+php artisan migrate:fresh --seed --force
+
+# Limpiar cachés
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# Enlazar storage
+php artisan storage:link
+
+# Servidor de desarrollo
+php artisan serve --host=0.0.0.0 --port=8000
+```
+
+### Producción
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan key:generate
+php artisan migrate --force
+php artisan storage:link
+php artisan config:cache && php artisan route:cache && php artisan view:cache
+```
+
+### Tinker (Debugging)
+```bash
+# Actualizar URLs de imágenes
+php artisan tinker
+>>> DB::table('profiles')->whereNotNull('photo_users')->update([
+...   'photo_users' => DB::raw("REPLACE(photo_users, '192.168.27.11', '192.168.27.12')")
+... ]);
+```
+
+---
+
+## 🐛 Bugs Resueltos (Historial)
+
+### 1. Foto de Perfil No Se Guardaba
+**Problema:** Laravel no procesa archivos multipart con PUT  
+**Solución:** Endpoint dedicado `POST /api/profile/photo`  
+**Commit:** Múltiples commits de corrección  
+**Estado:** ✅ Resuelto y testeado
+
+### 2. URLs de Imágenes Incorrectas
+**Problema:** URLs guardadas con IP .11 en lugar de .12  
+**Solución:** Actualizar `.env` + comando Tinker para corregir BD  
+**Estado:** ✅ Resuelto
+
+### 3. No Se Podía Eliminar Hacienda
+**Problema:** Endpoint DELETE no existía  
+**Solución:** Implementar `RanchController@destroy` con validaciones  
+**Tests:** 5 tests específicos  
+**Estado:** ✅ Resuelto y testeado
+
+---
+
+## 📖 Convenciones de Commits
+
+```
+feat:     nueva funcionalidad
+fix:      corrección de bug
+test:     agregar o modificar tests
+chore:    tareas de mantenimiento (build, deps)
+docs:     cambios en documentación
+refactor: cambio interno sin afectar comportamiento
+```
+
+**Ejemplos:**
+```bash
+git commit -m "feat(ranches): Implementar UPDATE y DELETE con validaciones ✅"
+git commit -m "fix(profiles): Corregir bug de foto de perfil 🐛"
+git commit -m "test(ranches): Agregar 10 tests de CRUD completo ✅"
+```
+
+---
+
+## 🎯 Checklist MVP (Backend)
+
+### Funcionalidades Core
+- [x] Autenticación (register, login, Google OAuth)
+- [x] Perfiles (ver, editar, foto, bio, métricas)
+- [x] Haciendas (CRUD completo con validaciones)
+- [x] Productos (CRUD completo)
+- [x] Chat (HTTP funcional, WebSocket en desarrollo)
+- [x] Favoritos y Reseñas
+- [x] Sistema de reportes
+
+### Calidad
+- [x] 27 tests automatizados (100% pasando)
+- [x] Validaciones robustas
+- [x] Manejo de errores
+- [x] Políticas de autorización
+- [x] 0 bugs críticos
+- [x] Código limpio (PSR-12)
+- [x] Documentación completa
+
+### Infraestructura
+- [x] Migraciones ejecutadas
+- [x] Seeders con datos reales
+- [x] Storage configurado
+- [x] .env configurado
+- [x] Servidor corriendo (0.0.0.0:8000)
+
+---
+
+## 🚢 Despliegue
+
+### Hosting Compartido
+1. Subir archivos (excepto `vendor/`, `node_modules/`)
+2. `composer install --no-dev --optimize-autoloader`
+3. Configurar `.env` con datos de producción
+4. `php artisan migrate --force`
+5. `php artisan storage:link`
+6. `php artisan config:cache`
+7. Permisos: `chmod -R 775 storage bootstrap/cache`
+8. Configurar Apache/Nginx para apuntar a `public/`
+
+### Servidor Dedicado
+- PHP-FPM para mejor performance
+- Supervisor para queues (opcional)
+- Laravel Echo Server para WebSockets
+- SSL con Let's Encrypt
+- MySQL optimizado
+
+---
+
+## 📊 Métricas de Calidad
+
+### Tests
+```
+ProfileApiTest: 17/17 tests (48 aserciones) ✅
+RanchApiTest:   10/10 tests (23 aserciones) ✅
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL:          27/27 tests (100% PASANDO) ✅
+Duración:       ~2.8s
+```
+
+### Cobertura de Funcionalidades
+```
+Auth:         100% ✅
+Perfiles:     100% ✅
+Haciendas:    100% ✅ (CRUD completo)
+Productos:    100% ✅
+Chat:         90% (falta WebSocket)
+Favoritos:    100% ✅
+Reseñas:      100% ✅
+```
+
+### Código
+- **Controladores:** 8 activos
+- **Modelos:** 21 con relaciones
+- **Migraciones:** 28 ejecutadas
+- **Factories:** 18 con datos reales
+- **Seeders:** 12 completos
+- **Tests:** 27 automatizados
+
+---
+
+## 🔮 Roadmap (Post-MVP)
+
+### Corto Plazo
+- [ ] WebSockets para chat en tiempo real
+- [ ] Panel de administración completo
+- [ ] Sistema de verificación avanzado
+- [ ] Notificaciones push
+
+### Mediano Plazo
+- [ ] Pagos integrados (escrow)
+- [ ] Comisiones por transacción
+- [ ] Suscripción Premium
+- [ ] Analítica de mercado (precios, tendencias)
+
+### Largo Plazo
+- [ ] Integración con sistemas de trazabilidad
+- [ ] Marketplace de equipos y alimentos
+- [ ] Expansión internacional
+- [ ] API pública para terceros
+
+---
+
+## 📝 Notas Importantes
+
+### Storage de Imágenes
+```bash
+# Enlace simbólico
+php artisan storage:link
+
+# Ubicación física
+storage/app/public/profile_images/
+storage/app/public/product_images/
+
+# URL accesible
+http://TU_IP:8000/storage/profile_images/archivo.jpg
+```
+
+### Servidor de Desarrollo
+```bash
+# Escuchar en todas las interfaces (accesible desde red local)
+php artisan serve --host=0.0.0.0 --port=8000
+
+# Solo localhost
+php artisan serve
+```
+
+### Base de Datos
+```bash
+# Reset completo con datos de prueba
+php artisan migrate:fresh --seed --force
+
+# Solo migraciones
+php artisan migrate --force
+
+# Rollback
+php artisan migrate:rollback
+```
+
+---
+
+## 🎯 KPIs de Éxito
+
+Para medir el éxito del MVP, trackear:
+- Usuarios registrados activos/mes
+- Publicaciones activas
+- Conversaciones iniciadas
+- Tasa de respuesta en chats
+- % publicaciones con al menos 1 conversación
+- Retención a 30 días
+- Rating promedio de vendedores
+
+---
+
+## 🏆 Logros del MVP
+
+### Técnicos
+- ✅ 27 tests automatizados (100% pasando)
+- ✅ CRUD completo de 3 entidades principales
+- ✅ Sistema de ubicaciones con 47K+ ciudades
+- ✅ 0 bugs críticos
+- ✅ Arquitectura escalable
+
+### Funcionales
+- ✅ 11 funcionalidades de perfiles operativas
+- ✅ Validaciones robustas en ambos lados
+- ✅ Manejo de errores completo
+- ✅ API RESTful bien diseñada
+
+### Documentación
+- ✅ README completo
+- ✅ .cursorrules actualizado
+- ✅ Código bien comentado
+- ✅ Tests como documentación viva
+
+---
+
+**Preparado por:** Equipo CorralX  
+**Versión:** 1.0.0 (MVP)  
+**Estado:** ✅ Production-Ready  
+**Calidad:** ⭐⭐⭐⭐⭐
