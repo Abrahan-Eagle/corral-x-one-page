@@ -508,7 +508,7 @@ APP_ENV=production
 APP_DEBUG=false
 APP_URL=http://192.168.27.12:8000
 APP_URL_LOCAL=http://192.168.27.12:8000
-APP_URL_PRODUCTION=https://backend.corralx.com
+APP_URL_PRODUCTION=https://corralx.com
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1

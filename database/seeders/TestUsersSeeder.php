@@ -27,7 +27,7 @@ class TestUsersSeeder extends Seeder
     private function getBaseUrl(): string
     {
         return env('APP_ENV') === 'production'
-            ? (env('APP_URL_PRODUCTION') ?: 'https://backend.corralx.com')
+            ? (env('APP_URL_PRODUCTION') ?: 'https://corralx.com')
             : (env('APP_URL_LOCAL') ?: 'http://localhost:8000');
     }
 
@@ -310,7 +310,7 @@ class TestUsersSeeder extends Seeder
                 'middleName' => 'Rene',
                 'lastName' => 'Furneri',
                 'secondLastName' => 'Hernandez',
-                'photo_users' => $this->buildStorageUrl('https://backend.corralx.com/storage/profile_images/Sbk2nU5TDv279AWrrPWfLBzbcCXg3oUSF0jtVdoq.jpg'),
+                'photo_users' => $this->buildStorageUrl('https://corralx.com/storage/profile_images/Sbk2nU5TDv279AWrrPWfLBzbcCXg3oUSF0jtVdoq.jpg'),
                 'bio' => '20 años de experiencia',
                 'date_of_birth' => '1985-07-08',
                 'maritalStatus' => 'single',
@@ -591,7 +591,7 @@ class TestUsersSeeder extends Seeder
             [
                 'id' => 2,
                 'product_id' => 2,
-                'file_url' => $this->buildStorageUrl('https://backend.corralx.com/storage/product_images/K8QOzOgmgf5ETQdZCTzvAWYsqhWwN5Q9FcqVmqmZ.jpg'),
+                'file_url' => $this->buildStorageUrl('https://corralx.com/storage/product_images/K8QOzOgmgf5ETQdZCTzvAWYsqhWwN5Q9FcqVmqmZ.jpg'),
                 'file_type' => 'image',
                 'alt_text' => null,
                 'is_primary' => 1,

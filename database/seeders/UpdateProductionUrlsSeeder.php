@@ -19,7 +19,7 @@ class UpdateProductionUrlsSeeder extends Seeder
         $this->command->info('🔄 Actualizando URLs de imágenes para producción...');
 
         // URL de producción (desde .env)
-        $productionUrl = env('APP_URL_PRODUCTION', 'https://backend.corralx.com');
+        $productionUrl = env('APP_URL_PRODUCTION', 'https://corralx.com');
         
         // Patrones de URLs locales a reemplazar
         $localPatterns = [
