@@ -1,12 +1,12 @@
-name: Deploy to Production (corralx.com)
+name: Deploy to Test Environment (test.corralx.com)
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   FTP-Deploy-Action:
-    name: FTP-Deploy-Action (Production)
+    name: FTP-Deploy-Action (Test Environment)
     runs-on: ubuntu-latest
 
     steps:
@@ -30,21 +30,21 @@ jobs:
       - name: Install PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' # Ajusta a la versión de PHP usada en tu proyecto Laravel
+          php-version: '8.2'
           tools: 'composer'
 
-      # Paso 5: Configurar el archivo .env desde los secretos (PRODUCCIÓN)
-      - name: Setup environment file (PRODUCTION)
+      # Paso 5: Configurar el archivo .env desde los secretos (TEST)
+      - name: Setup environment file (TEST)
         run: |
-          echo "Setting up .env from secrets for PRODUCTION environment..."
-          echo "${{ secrets.ENV_CONTENT }}" > .env
-          # Asegurar que APP_DEBUG sea false en producción
-          sed -i 's/APP_DEBUG=.*/APP_DEBUG=false/' .env
-          # Cambiar APP_URL a corralx.com
-          sed -i 's|APP_URL=.*|APP_URL=https://corralx.com|' .env
+          echo "Setting up .env from secrets for TEST environment..."
+          echo "${{ secrets.ENV_CONTENT_TEST }}" > .env
+          # Asegurar que APP_DEBUG sea true en testing
+          sed -i 's/APP_DEBUG=.*/APP_DEBUG=true/' .env
+          # Cambiar APP_URL a test.corralx.com
+          sed -i 's|APP_URL=.*|APP_URL=https://test.corralx.com|' .env
           cat .env # Para depurar y verificar el contenido del .env
 
-      # Paso 6: Instalar dependencias PHP (incluyendo dev para seeders)
+      # Paso 6: Instalar dependencias PHP
       - name: Install PHP dependencies
         run: composer install --optimize-autoloader --no-interaction
 
@@ -64,7 +64,7 @@ jobs:
           rm -f bootstrap/cache/config.php
           rm -f bootstrap/cache/routes-v7.php
           rm -f bootstrap/cache/services.php
-          
+
       # Paso 9: Crear directorios necesarios antes del despliegue
       - name: Create required directories
         run: |
@@ -75,13 +75,13 @@ jobs:
           mkdir -p storage/framework/views
           mkdir -p bootstrap/cache
 
-      # Paso 10: Desplegar archivos por FTP (PRODUCCIÓN)
-      - name: FTP-Deploy-Action (Production)
+      # Paso 10: Desplegar archivos por FTP (TEST - credenciales separadas)
+      - name: FTP-Deploy-Action (Test)
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.FTP_SERVER_TEST }}
+          username: ${{ secrets.FTP_USERNAME_TEST }}
+          password: ${{ secrets.FTP_PASSWORD_TEST }}
 
       # Paso 11: Configurar permisos de directorios (optimizado para servidor compartido)
       - name: Set directory permissions
@@ -96,8 +96,9 @@ jobs:
           echo "Creating storage link..."
           php artisan storage:link || echo "Storage link already exists or not needed"
 
-      # Paso 13: Verificar el despliegue (PRODUCCIÓN)
-      - name: Verify deployment (Production)
+      # Paso 13: Verificar el despliegue (TEST)
+      - name: Verify deployment (Test)
         run: |
-          echo "Verifying deployment to corralx.com..."
-          curl -f https://corralx.com/api/env-test || echo "API endpoint not accessible"
+          echo "Verifying deployment to test.corralx.com..."
+          curl -f https://test.corralx.com/api/env-test || echo "API endpoint not accessible"
+
