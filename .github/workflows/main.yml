@@ -46,18 +46,24 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --optimize-autoloader --no-interaction
 
-      # Paso 7: Optimizar Laravel para producción
-      - name: Optimize Laravel for production
+      # Paso 7: Limpiar cachés (NO cachear para evitar rutas absolutas del runner)
+      - name: Clear Laravel caches
         run: |
           php artisan config:clear
           php artisan cache:clear
           php artisan route:clear
           php artisan view:clear
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
+          # NO cachear configuraciones aquí - se hará en el servidor después del despliegue
 
-      # Paso 8: Crear directorios necesarios antes del despliegue
+      # Paso 8: Eliminar archivos de caché que contienen rutas absolutas
+      - name: Remove cached config files
+        run: |
+          echo "Removing cached config files with absolute paths..."
+          rm -f bootstrap/cache/config.php
+          rm -f bootstrap/cache/routes-v7.php
+          rm -f bootstrap/cache/services.php
+          
+      # Paso 9: Crear directorios necesarios antes del despliegue
       - name: Create required directories
         run: |
           echo "Creating required directories..."
@@ -67,7 +73,7 @@ jobs:
           mkdir -p storage/framework/views
           mkdir -p bootstrap/cache
 
-      # Paso 9: Desplegar archivos por FTP
+      # Paso 10: Desplegar archivos por FTP
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
@@ -75,20 +81,20 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-      # Paso 10: Configurar permisos de directorios (optimizado para servidor compartido)
+      # Paso 11: Configurar permisos de directorios (optimizado para servidor compartido)
       - name: Set directory permissions
         run: |
           echo "Setting up directory permissions for shared hosting..."
           chmod -R 755 storage bootstrap/cache
           chmod -R 644 .env
 
-      # Paso 11: Crear enlace simbólico de storage (si es necesario)
+      # Paso 12: Crear enlace simbólico de storage (si es necesario)
       - name: Create storage link
         run: |
           echo "Creating storage link..."
           php artisan storage:link || echo "Storage link already exists or not needed"
 
-      # Paso 12: Verificar el despliegue
+      # Paso 13: Verificar el despliegue
       - name: Verify deployment
         run: |
           echo "Verifying deployment..."
