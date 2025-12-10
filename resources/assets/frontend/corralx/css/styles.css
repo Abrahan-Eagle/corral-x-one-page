@@ -524,6 +524,35 @@ footer .link-underline:hover::after {
     width: 100%;
 }
 
+/* Social Media Links */
+footer .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9) !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+footer .social-link:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(143, 177, 53, 0.4);
+}
+
+footer .social-link i {
+    transition: transform 0.3s ease;
+}
+
+footer .social-link:hover i {
+    transform: scale(1.1);
+}
+
 footer p {
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
