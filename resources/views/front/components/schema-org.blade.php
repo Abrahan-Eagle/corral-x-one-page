@@ -204,13 +204,69 @@
         "@type": "OfferCatalog",
         "name": "Productos y Servicios Ganaderos",
         "itemListElement": [
-          {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Ganado Bovino", "category": "Ganado"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Ganado Bufalino", "category": "Ganado"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Ganado Equino", "category": "Ganado"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Ganado Porcino", "category": "Ganado"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Equipos de Hacienda", "category": "Equipos"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Maquinaria Agrícola", "category": "Maquinaria"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Transporte Ganadero", "category": "Servicios"}}
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Venta de Ganado Bovino",
+              "description": "Compra y venta de ganado bovino en Venezuela",
+              "category": "Ganado"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Venta de Ganado Bufalino",
+              "description": "Compra y venta de ganado bufalino en Venezuela",
+              "category": "Ganado"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Venta de Ganado Equino",
+              "description": "Compra y venta de ganado equino en Venezuela",
+              "category": "Ganado"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Venta de Ganado Porcino",
+              "description": "Compra y venta de ganado porcino en Venezuela",
+              "category": "Ganado"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Equipos de Hacienda",
+              "description": "Compra y venta de equipos de hacienda",
+              "category": "Equipos"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Maquinaria Agrícola",
+              "description": "Compra y venta de maquinaria agrícola",
+              "category": "Maquinaria"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Transporte Ganadero",
+              "description": "Servicios de transporte ganadero",
+              "category": "Servicios"
+            }
+          }
         ]
       }
     }
