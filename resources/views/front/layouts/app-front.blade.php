@@ -20,7 +20,7 @@
     <!-- SEO: Producción - Indexar y seguir -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
-    <link rel="canonical" href="{{ url('/') }}">
+    <link rel="canonical" href="https://corralx.com{{ request()->getPathInfo() }}">
     @endif
     <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
 
