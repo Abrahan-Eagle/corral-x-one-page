@@ -57,21 +57,21 @@
   
   <!-- Páginas legales -->
   <url>
-    <loc>https://corralx.com/pages/politica-privacidad.html</loc>
+    <loc>https://corralx.com/politica-privacidad</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
-    <loc>https://corralx.com/pages/terminos-condiciones.html</loc>
+    <loc>https://corralx.com/terminos-condiciones</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
-    <loc>https://corralx.com/pages/eliminar-cuenta.html</loc>
+    <loc>https://corralx.com/eliminar-cuenta</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
