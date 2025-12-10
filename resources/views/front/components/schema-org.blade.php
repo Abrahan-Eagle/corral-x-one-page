@@ -23,7 +23,7 @@
       },
       "sameAs": [
         "https://www.facebook.com/corralx",
-        "https://www.instagram.com/corralx",
+        "https://www.instagram.com/corral__x/?igsh=MTBvdWprdngwcW1ydA%3D%3D#",
         "https://twitter.com/corralx"
       ],
       "areaServed": {

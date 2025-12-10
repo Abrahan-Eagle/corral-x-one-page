@@ -5,15 +5,15 @@
             <div class="col-12">
                 <!-- Redes Sociales -->
                 <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
-                    <a href="https://www.facebook.com/corralx" target="_blank" rel="noopener noreferrer" 
+                    <a href="#" target="_blank" rel="noopener noreferrer" 
                        class="text-muted social-link" aria-label="Síguenos en Facebook">
                         <i class="fab fa-facebook-f" style="font-size: 1.2rem;"></i>
                     </a>
-                    <a href="https://www.instagram.com/corralx" target="_blank" rel="noopener noreferrer" 
+                    <a href="https://www.instagram.com/corral__x/?igsh=MTBvdWprdngwcW1ydA%3D%3D#" target="_blank" rel="noopener noreferrer" 
                        class="text-muted social-link" aria-label="Síguenos en Instagram">
                         <i class="fab fa-instagram" style="font-size: 1.2rem;"></i>
                     </a>
-                    <a href="https://twitter.com/corralx" target="_blank" rel="noopener noreferrer" 
+                    <a href="#" target="_blank" rel="noopener noreferrer" 
                        class="text-muted social-link" aria-label="Síguenos en Twitter">
                         <i class="fab fa-twitter" style="font-size: 1.2rem;"></i>
                     </a>
