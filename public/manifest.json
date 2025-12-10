@@ -9,8 +9,8 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "es",
-  "categories": ["business", "shopping", "food", "agriculture"],
-  "keywords": ["ganado", "ganadería", "venezuela", "marketplace", "compra ganado", "vende ganado", "equipos agrícolas", "maquinaria ganadera", "bovinos", "bufalinos", "equinos", "porcinos", "tractores", "ordeñadoras", "insumos ganaderos", "transporte ganadero", "fincas venezuela", "hatos ganaderos"],
+  "categories": ["business", "shopping", "food", "agriculture", "marketplace", "livestock", "farm", "venezuela"],
+  "keywords": ["ganado", "ganadería", "venezuela", "marketplace", "compra ganado", "vende ganado", "equipos agrícolas", "maquinaria ganadera", "bovinos", "bufalinos", "equinos", "porcinos", "tractores", "ordeñadoras", "insumos ganaderos", "transporte ganadero", "fincas venezuela", "hatos ganaderos", "corral x", "corralx", "marketplace ganadero venezuela", "comprar ganado online", "vender ganado online", "ganado bovino venezuela", "ganado bufalino", "ganado equino", "ganado porcino", "equipos de hacienda", "maquinaria agrícola venezuela"],
   "icons": [
     {
       "src": "/assets/front/images/Favicon/web-app-manifest-192x192.png",

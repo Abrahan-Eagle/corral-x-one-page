@@ -11,9 +11,17 @@
     <meta name="description" content="Corral X: Marketplace ganadero de Venezuela. Compra y vende ganado bovino, bufalino, equino y porcino. También encuentra equipos de hacienda, maquinaria agrícola, insumos ganaderos y servicios de transporte. Conecta directamente con ganaderos sin intermediarios.">
     <meta name="keywords" content="ganado venezuela, comprar ganado, vender ganado, marketplace ganadero, equipos de hacienda, maquinaria agrícola, ganadería venezuela, bovinos, bufalinos, equinos, porcinos, tractores ganaderos, ordeñadoras, cercas eléctricas, bebederos ganaderos, insumos agrícolas, transporte ganadero, fincas venezuela, hatos ganaderos">
     <meta name="author" content="Corral X">
+    @if(str_contains(request()->getHost(), 'test.corralx.com'))
+    <!-- NO INDEXAR: Entorno de testing -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="bingbot" content="noindex, nofollow">
+    @else
+    <!-- SEO: Producción - Indexar y seguir -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
     <link rel="canonical" href="{{ url('/') }}">
+    @endif
     <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
 
     <!-- Open Graph / Facebook -->
@@ -42,6 +50,18 @@
     <meta name="revisit-after" content="7 days">
     <meta name="distribution" content="global">
     <meta name="rating" content="general">
+    
+    <!-- SGE (Search Generative Experience) - Rich Snippets -->
+    <meta name="application-name" content="Corral X">
+    <meta name="apple-mobile-web-app-title" content="Corral X">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- ASO (App Store Optimization) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#386A20">
+    <meta name="msapplication-TileColor" content="#386A20">
+    <meta name="msapplication-config" content="{{ asset('assets/front/images/Favicon/browserconfig.xml') }}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">

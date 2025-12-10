@@ -28,6 +28,21 @@
       ],
       "areaServed": {
         "@type": "Country",
+        "name": "Venezuela",
+        "identifier": "VE"
+      },
+      "knowsAbout": [
+        "Ganadería",
+        "Marketplace",
+        "Ganado Bovino",
+        "Ganado Bufalino",
+        "Ganado Equino",
+        "Ganado Porcino",
+        "Equipos de Hacienda",
+        "Maquinaria Agrícola"
+      ],
+      "foundingLocation": {
+        "@type": "Country",
         "name": "Venezuela"
       }
     },
@@ -45,8 +60,14 @@
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
-        "ratingCount": "1250"
+        "ratingCount": "1250",
+        "bestRating": "5",
+        "worstRating": "1"
       },
+      "applicationSubCategory": "Marketplace Ganadero",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "1.0.0",
+      "releaseNotes": "Marketplace ganadero de Venezuela con IA para análisis de mercado",
       "description": "Marketplace ganadero para comprar y vender ganado bovino, bufalino, equino y porcino. También incluye equipos de hacienda, maquinaria agrícola, insumos y servicios de transporte.",
       "featureList": [
         "Mercado Inteligente de Ganado",

@@ -26,6 +26,27 @@ use App\Http\Controllers\Web\RolePermission\RoleController;
 // Rutas de autenticación (Laravel UI)
 Auth::routes();
 
+// Ruta dinámica para robots.txt (bloquea test.corralx.com)
+Route::get('/robots.txt', function () {
+    $isTestEnvironment = str_contains(request()->getHost(), 'test.corralx.com');
+    
+    if ($isTestEnvironment) {
+        // Bloquear completamente test.corralx.com
+        return response("User-agent: *\nDisallow: /", 200)
+            ->header('Content-Type', 'text/plain');
+    }
+    
+    // Para producción (corralx.com), usar el archivo estático
+    $file = public_path('robots.txt');
+    if (file_exists($file)) {
+        return response(file_get_contents($file), 200)
+            ->header('Content-Type', 'text/plain');
+    }
+    
+    return response("User-agent: *\nAllow: /", 200)
+        ->header('Content-Type', 'text/plain');
+})->name('robots.txt');
+
 // Ruta para assetlinks.json (Android App Links)
 Route::get('/.well-known/assetlinks.json', function () {
     $file = public_path('.well-known/assetlinks.json');
