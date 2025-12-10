@@ -88,7 +88,7 @@ jobs:
         run: |
           echo "Setting up directory permissions for shared hosting..."
           chmod -R 755 storage bootstrap/cache
-          chmod -R 644 .env
+          chmod 600 .env
 
       # Paso 12: Crear enlace simbólico de storage (si es necesario)
       - name: Create storage link
