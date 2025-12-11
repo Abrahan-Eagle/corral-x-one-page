@@ -71,6 +71,17 @@ return new class extends Migration
             });
         }
 
+        // Eliminar duplicados antes de restaurar la restricción única antigua
+        // Mantener solo la review más reciente para cada combinación (profile_id, product_id)
+        DB::statement("
+            DELETE r1 FROM reviews r1
+            INNER JOIN reviews r2
+            WHERE r1.profile_id = r2.profile_id
+            AND r1.product_id = r2.product_id
+            AND r1.product_id IS NOT NULL
+            AND r1.id < r2.id
+        ");
+
         // Restaurar la restricción única antigua
         Schema::table('reviews', function (Blueprint $table) {
             $table->unique(['profile_id', 'product_id']);

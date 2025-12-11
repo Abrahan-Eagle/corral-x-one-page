@@ -76,7 +76,7 @@ class AdvertisementSeeder extends Seeder
                     'description' => "Producto destacado de {$ranchName}",
                     'image_url' => $imageUrl,
                     'target_url' => null, // Apunta al producto mismo
-                    'priority' => rand(50, 100), // Alta prioridad
+                    'priority' => rand(10, 50), // Alta prioridad
                     'start_date' => now()->subDays(rand(1, 7)),
                     'end_date' => now()->addDays(rand(15, 60)),
                 ]);

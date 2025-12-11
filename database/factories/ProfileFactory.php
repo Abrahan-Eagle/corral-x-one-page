@@ -67,6 +67,7 @@ class ProfileFactory extends Factory
             'kyc_rif_path' => null,
             'kyc_selfie_path' => null,
             'kyc_selfie_with_doc_path' => null,
+            'kyc_liveness_selfies_paths' => null,
             'kyc_verified_at' => null,
         ];
     }
@@ -218,6 +219,75 @@ class ProfileFactory extends Factory
             'user_type' => 'both',
             'is_verified' => true,
             'is_both_verified' => true,
+        ]);
+    }
+
+    /**
+     * Estado para usuarios con KYC verificado
+     */
+    public function kycVerified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'kyc_status' => 'verified',
+            'kyc_document_type' => 'ci_ve',
+            'kyc_document_number' => $this->faker->numerify('V-########'),
+            'kyc_country_code' => 'VE',
+            'kyc_doc_front_path' => 'kyc/documents/front_' . $this->faker->uuid() . '.jpg',
+            'kyc_rif_path' => 'kyc/documents/rif_' . $this->faker->uuid() . '.jpg',
+            'kyc_selfie_path' => 'kyc/selfies/selfie_' . $this->faker->uuid() . '.jpg',
+            'kyc_selfie_with_doc_path' => 'kyc/selfies/selfie_with_doc_' . $this->faker->uuid() . '.jpg',
+            'kyc_liveness_selfies_paths' => json_encode([
+                'kyc/' . $this->faker->numberBetween(1, 1000) . '/liveness_1.jpg',
+                'kyc/' . $this->faker->numberBetween(1, 1000) . '/liveness_2.jpg',
+                'kyc/' . $this->faker->numberBetween(1, 1000) . '/liveness_3.jpg',
+                'kyc/' . $this->faker->numberBetween(1, 1000) . '/liveness_4.jpg',
+                'kyc/' . $this->faker->numberBetween(1, 1000) . '/liveness_5.jpg',
+            ]),
+            'kyc_verified_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
+        ]);
+    }
+
+    /**
+     * Estado para usuarios con KYC pendiente
+     */
+    public function kycPending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'kyc_status' => 'pending',
+            'kyc_document_type' => 'ci_ve',
+            'kyc_document_number' => $this->faker->numerify('V-########'),
+            'kyc_country_code' => 'VE',
+            'kyc_doc_front_path' => 'kyc/documents/front_' . $this->faker->uuid() . '.jpg',
+            'kyc_rif_path' => 'kyc/documents/rif_' . $this->faker->uuid() . '.jpg',
+            'kyc_selfie_path' => 'kyc/selfies/selfie_' . $this->faker->uuid() . '.jpg',
+            'kyc_selfie_with_doc_path' => null,
+            'kyc_liveness_selfies_paths' => null,
+            'kyc_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Estado para usuarios con KYC rechazado
+     */
+    public function kycRejected(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'kyc_status' => 'rejected',
+            'kyc_rejection_reason' => $this->faker->randomElement([
+                'Documento ilegible',
+                'Selfie no coincide con documento',
+                'Documento vencido',
+                'Información inconsistente',
+            ]),
+            'kyc_document_type' => 'ci_ve',
+            'kyc_document_number' => $this->faker->numerify('V-########'),
+            'kyc_country_code' => 'VE',
+            'kyc_doc_front_path' => 'kyc/documents/front_' . $this->faker->uuid() . '.jpg',
+            'kyc_rif_path' => null,
+            'kyc_selfie_path' => null,
+            'kyc_selfie_with_doc_path' => null,
+            'kyc_liveness_selfies_paths' => null,
+            'kyc_verified_at' => null,
         ]);
     }
 }

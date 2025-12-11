@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
             StatesSeeder::class,
             CitiesSeeder::class,
             ParishesSeeder::class,
-            //TestUsersSeeder::class,  // Descomentar para cargar usuarios de prueba
-            //CorralXSeeder::class, // Seeder específico para el marketplace
+            TestUsersSeeder::class,  // Descomentar para cargar usuarios de prueba
+            CorralXSeeder::class, // Seeder específico para el marketplace
         ]);
     }
 }

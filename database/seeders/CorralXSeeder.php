@@ -10,6 +10,7 @@ use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Favorite;
 use App\Models\Review;
+use App\Models\Order;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Report;
@@ -414,13 +415,27 @@ class CorralXSeeder extends Seeder
     {
         $reviewCount = rand(2, 8);
         
+        // Obtener perfiles aleatorios para las reviews (evitar duplicados)
+        $profiles = \App\Models\Profile::inRandomOrder()->limit($reviewCount)->get();
+        
         for ($i = 0; $i < $reviewCount; $i++) {
+            // Crear un Order único para cada review
+            $order = Order::factory()->create([
+                'product_id' => $product->id,
+                'seller_profile_id' => $product->ranch->profile_id,
+                'buyer_profile_id' => $profiles->get($i % $profiles->count())->id,
+                'ranch_id' => $product->ranch_id,
+                'status' => 'completed',
+            ]);
+            
             Review::factory()
                 ->approved()
                 ->verifiedPurchase()
                 ->create([
+                    'order_id' => $order->id,
                     'product_id' => $product->id,
                     'ranch_id' => $product->ranch_id,
+                    'profile_id' => $order->buyer_profile_id,
                 ]);
         }
     }
