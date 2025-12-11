@@ -120,32 +120,57 @@
       <p>Recopilamos información para proporcionar y mejorar nuestro servicio, incluyendo las funciones del marketplace, mensajería y perfiles.</p>
       <ul>
         <li><strong>Datos de perfil:</strong> nombre, correo electrónico, foto de perfil, biografía y datos de finca/publicación que usted proporciona.</li>
+        <li><strong>Fotos y videos:</strong> imágenes de productos (ganado) que publica, selfies y documentos de identidad para verificación de identidad (KYC), y fotos de perfil.</li>
+        <li><strong>Ubicación:</strong> recopilamos su ubicación precisa (GPS) y aproximada (basada en red) para mostrar productos cercanos, filtrar búsquedas por ubicación y mejorar la experiencia del marketplace. Puede desactivar el acceso a la ubicación en la configuración de su dispositivo.</li>
         <li><strong>Contenido de mensajes:</strong> los mensajes enviados a través del chat se almacenan para permitir la comunicación entre usuarios.</li>
         <li><strong>Datos de actividad:</strong> acciones en la Aplicación (favoritos, reportes, interacciones).</li>
       </ul>
 
       <h2>2. Datos de uso y registro (automáticos)</h2>
       <p>Recopilamos datos sobre cómo accede y utiliza la Aplicación: tipo de dispositivo, sistema operativo, identificadores de dispositivo, dirección IP, registros de errores y diagnóstico.</p>
+      <p><strong>Token de dispositivo para notificaciones:</strong> utilizamos Firebase Cloud Messaging (FCM) para enviar notificaciones push. Para ello, recopilamos un token único de dispositivo que nos permite enviarle notificaciones sobre mensajes, actualizaciones de productos y otras comunicaciones relevantes.</p>
 
       <h2>3. Bases legales</h2>
       <p>Procesamos sus datos con base en su consentimiento, para ejecutar el servicio (contrato) y por interés legítimo (seguridad, prevención de fraude y mejora del servicio).</p>
 
       <h2>4. Uso de servicios de terceros</h2>
-      <p>Podemos usar proveedores externos (autenticación, análisis, publicidad) que recopilan datos bajo sus propias políticas (por ejemplo, Google para autenticación o AdMob para anuncios).</p>
+      <p>Utilizamos los siguientes servicios de terceros que recopilan datos bajo sus propias políticas de privacidad:</p>
+      <ul>
+        <li><strong>Google (Autenticación):</strong> para permitir el inicio de sesión con cuenta de Google. Google recopila información según su <a href="https://policies.google.com/privacy" target="_blank">Política de Privacidad</a>.</li>
+        <li><strong>Firebase Cloud Messaging (FCM):</strong> servicio de Google para enviar notificaciones push. Compartimos el token de dispositivo y datos básicos de uso para permitir las notificaciones. Firebase procesa estos datos según la <a href="https://firebase.google.com/support/privacy" target="_blank">Política de Privacidad de Firebase</a>.</li>
+        <li><strong>Google Analytics (si aplica):</strong> para analizar el uso de la aplicación y mejorar nuestros servicios. Los datos se procesan según la <a href="https://policies.google.com/privacy" target="_blank">Política de Privacidad de Google</a>.</li>
+        <li><strong>Proveedores de hosting y servicios:</strong> utilizamos servicios de terceros para alojar nuestros servidores y procesar datos técnicos necesarios para el funcionamiento de la aplicación.</li>
+      </ul>
 
       <h2>5. Compartición de datos</h2>
-      <p>Podemos compartir datos con otros usuarios (información de publicación visible públicamente), proveedores de servicios (hosting, procesadores) y autoridades cuando la ley lo requiera.</p>
+      <p>Podemos compartir datos con:</p>
+      <ul>
+        <li><strong>Otros usuarios:</strong> información de publicación visible públicamente (fotos de productos, descripción, ubicación general, datos de contacto si usted lo permite).</li>
+        <li><strong>Proveedores de servicios:</strong> hosting, procesadores de pago (si aplica), y servicios técnicos necesarios para el funcionamiento de la aplicación.</li>
+        <li><strong>Google/Firebase:</strong> identificadores de dispositivo, datos de uso básicos y tokens para notificaciones push, según se describe en la sección 4.</li>
+        <li><strong>Autoridades:</strong> cuando la ley lo requiera o para proteger nuestros derechos legales.</li>
+      </ul>
 
-      <h2>6. Seguridad</h2>
+      <h2>6. Permisos de la aplicación</h2>
+      <p>La aplicación solicita los siguientes permisos y los utiliza de la siguiente manera:</p>
+      <ul>
+        <li><strong>Cámara:</strong> para tomar fotos de productos (ganado) que desea publicar, y para la verificación de identidad (KYC) mediante selfies y captura de documentos de identidad.</li>
+        <li><strong>Ubicación:</strong> para mostrar productos cercanos a su ubicación, filtrar búsquedas por ubicación y mejorar la experiencia del marketplace. Puede desactivar este permiso en cualquier momento desde la configuración de su dispositivo.</li>
+        <li><strong>Notificaciones:</strong> para enviarle alertas sobre mensajes recibidos, actualizaciones de productos de su interés, y otras comunicaciones relevantes. Puede gestionar estas preferencias desde la configuración de la aplicación.</li>
+        <li><strong>Almacenamiento:</strong> para guardar temporalmente imágenes antes de subirlas y para mejorar el rendimiento de la aplicación mediante caché.</li>
+      </ul>
+      <p>Puede revocar estos permisos en cualquier momento desde la configuración de su dispositivo, aunque esto puede afectar algunas funcionalidades de la aplicación.</p>
+
+      <h2>7. Seguridad</h2>
       <p>Implementamos medidas razonables para proteger la información. Sin embargo, ningún sistema es 100% seguro; actúe con precaución al compartir información sensible.</p>
 
-      <h2>7. Privacidad de menores</h2>
+      <h2>8. Privacidad de menores</h2>
       <p>La Aplicación no está dirigida a menores de 18 años. No recopilamos conscientemente información de menores; si tiene conocimiento de ello, contáctenos para eliminar los datos.</p>
 
-      <h2>8. Cambios a esta Política</h2>
+      <h2>9. Cambios a esta Política</h2>
       <p>Podemos actualizar esta Política periódicamente; los cambios serán efectivos cuando se publiquen en esta página. Revise la política con regularidad.</p>
 
-      <h2>9. Contáctenos</h2>
+      <h2>10. Contáctenos</h2>
       <p>Si tiene preguntas sobre esta Política de Privacidad, contáctenos en: <strong>soporte@corralx.com</strong></p>
     </div>
   </main>
