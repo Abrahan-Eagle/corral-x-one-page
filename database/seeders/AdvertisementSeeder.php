@@ -49,10 +49,18 @@ class AdvertisementSeeder extends Seeder
     {
         $this->command->info('   🎯 Creando productos patrocinados...');
 
-        // Obtener productos activos aleatorios
+        // URLs de ganado de ProductImageFactory (Unsplash)
+        $cattleImages = [
+            'https://images.unsplash.com/photo-1719167610856-415b6938a40e?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE4fHx8ZW58MHx8fHx8&ixlib=rb-4.1.0&q=60&?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1568478570328-be3225a8dc05?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1589348792383-8ebcbec4ef88?fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2F0dGxlJTIwZ3JhemluZ3xlbnwwfHwwfHx8MA%3D%3D&ixlib=rb-4.1.0&q=60?w=800&h=600&fit=crop',
+        ];
+
+        // Obtener solo 3 productos activos aleatorios
         $activeProducts = Product::where('status', 'active')
             ->inRandomOrder()
-            ->limit(10)
+            ->limit(3)
             ->get();
 
         if ($activeProducts->isEmpty()) {
@@ -60,10 +68,12 @@ class AdvertisementSeeder extends Seeder
             return;
         }
 
+        $imageIndex = 0;
         foreach ($activeProducts as $product) {
             $product->load(['ranch', 'images']);
             $ranchName = $product->ranch?->name ?? 'Hacienda';
-            $imageUrl = $product->images->first()?->file_url ?? 'https://via.placeholder.com/800x600?text=Producto+Patrocinado';
+            // Usar imagen del producto si existe, sino usar URL de ganado de Unsplash
+            $imageUrl = $product->images->first()?->file_url ?? $cattleImages[$imageIndex % count($cattleImages)];
             $createdBy = $admin?->id ?? User::factory()->admin()->create()->id;
 
             Advertisement::factory()
@@ -82,6 +92,7 @@ class AdvertisementSeeder extends Seeder
                 ]);
 
             $this->command->info("      ✅ Producto patrocinado creado: {$product->title}");
+            $imageIndex++;
         }
     }
 
@@ -92,95 +103,37 @@ class AdvertisementSeeder extends Seeder
     {
         $this->command->info('   🏢 Creando publicidad externa...');
 
-        // Anunciantes venezolanos comunes
-        $advertisers = [
-            [
-                'name' => 'Toyota de Venezuela',
-                'description' => 'Vehículos y repuestos para el sector ganadero',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Toyota+Venezuela',
-                'target_url' => 'https://toyota.com.ve',
-            ],
-            [
-                'name' => 'Agropecuaria La Esperanza',
-                'description' => 'Alimentos balanceados y suplementos para ganado',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Agropecuaria',
-                'target_url' => null,
-            ],
-            [
-                'name' => 'Veterinaria San Gabriel',
-                'description' => 'Servicios veterinarios y vacunas para ganado',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Veterinaria',
-                'target_url' => null,
-            ],
-            [
-                'name' => 'Fertilizantes del Llano',
-                'description' => 'Fertilizantes y productos para pastos',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Fertilizantes',
-                'target_url' => null,
-            ],
-            [
-                'name' => 'Maquinaria Agrícola Venagro',
-                'description' => 'Equipos y maquinaria para el campo',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Maquinaria',
-                'target_url' => null,
-            ],
-            [
-                'name' => 'Seguros Ganaderos del Sur',
-                'description' => 'Seguros especializados para ganadería',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Seguros',
-                'target_url' => null,
-            ],
-            [
-                'name' => 'Banco Agrícola',
-                'description' => 'Créditos y financiamiento para ganaderos',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Banco+Agricola',
-                'target_url' => null,
-            ],
-            [
-                'name' => 'Transporte de Ganado Express',
-                'description' => 'Servicios de transporte de ganado',
-                'image_url' => 'https://via.placeholder.com/800x600?text=Transporte',
-                'target_url' => null,
-            ],
+        // URLs de ganado de ProductImageFactory (Unsplash)
+        $cattleImages = [
+            'https://images.unsplash.com/photo-1719167610856-415b6938a40e?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE4fHx8ZW58MHx8fHx8&ixlib=rb-4.1.0&q=60&?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1568478570328-be3225a8dc05?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1589348792383-8ebcbec4ef88?fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2F0dGxlJTIwZ3JhemluZ3xlbnwwfHwwfHx8MA%3D%3D&ixlib=rb-4.1.0&q=60?w=800&h=600&fit=crop',
         ];
 
-        foreach ($advertisers as $advertiser) {
-            Advertisement::factory()
-                ->externalAd()
-                ->active()
-                ->create([
-                    'advertiser_name' => $advertiser['name'],
-                    'title' => $advertiser['name'],
-                    'description' => $advertiser['description'],
-                    'image_url' => $advertiser['image_url'],
-                    'target_url' => $advertiser['target_url'],
-                    'created_by' => $admin?->id ?? User::factory()->admin()->create()->id,
-                    'priority' => rand(10, 50), // Prioridad media
-                    'start_date' => now()->subDays(rand(1, 14)),
-                    'end_date' => now()->addDays(rand(30, 90)),
-                ]);
+        // Solo crear 1 anuncio externo activo
+        $advertiser = [
+            'name' => 'Agropecuaria La Esperanza',
+            'description' => 'Alimentos balanceados y suplementos para ganado',
+            'image_url' => $cattleImages[0], // Usar imagen de ganado
+            'target_url' => null,
+        ];
 
-            $this->command->info("      ✅ Publicidad externa creada: {$advertiser['name']}");
-        }
+        Advertisement::factory()
+            ->externalAd()
+            ->active()
+            ->create([
+                'advertiser_name' => $advertiser['name'],
+                'title' => $advertiser['name'],
+                'description' => $advertiser['description'],
+                'image_url' => $advertiser['image_url'],
+                'target_url' => $advertiser['target_url'],
+                'created_by' => $admin?->id ?? User::factory()->admin()->create()->id,
+                'priority' => rand(10, 50), // Prioridad media
+                'start_date' => now()->subDays(rand(1, 14)),
+                'end_date' => now()->addDays(rand(30, 90)),
+            ]);
 
-        // Crear algunos anuncios inactivos para pruebas
-        for ($i = 0; $i < 3; $i++) {
-            Advertisement::factory()
-                ->externalAd()
-                ->inactive()
-                ->create([
-                    'created_by' => $admin?->id ?? User::factory()->admin()->create()->id,
-                ]);
-        }
-
-        // Crear algunos anuncios expirados para pruebas
-        for ($i = 0; $i < 2; $i++) {
-            Advertisement::factory()
-                ->externalAd()
-                ->expired()
-                ->create([
-                    'created_by' => $admin?->id ?? User::factory()->admin()->create()->id,
-                ]);
-        }
+        $this->command->info("      ✅ Publicidad externa creada: {$advertiser['name']}");
     }
 }
