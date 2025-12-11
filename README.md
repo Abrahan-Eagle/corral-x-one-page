@@ -737,6 +737,78 @@ refactor: cambio interno sin afectar comportamiento
 
 ---
 
+## 🔀 Flujo de Trabajo con Git
+
+### Estrategia de Ramas
+
+**IMPORTANTE:** Este proyecto utiliza un flujo de trabajo con dos ramas principales:
+
+1. **`dev`** - Rama de pruebas/testing
+   - Despliegue automático a: `test.corralx.com`
+   - Ambiente: `APP_DEBUG=true`
+   - Todos los cambios deben probarse aquí primero
+
+2. **`main`** - Rama de producción
+   - Despliegue automático a: `corralx.com`
+   - Ambiente: `APP_DEBUG=false`
+   - Solo se actualiza cuando los cambios están 100% verificados
+
+### Proceso de Trabajo
+
+**PASO 1: Desarrollo y Pruebas (SIEMPRE PRIMERO)**
+```bash
+# 1. Trabajar en la rama dev
+git checkout dev
+git pull origin dev
+
+# 2. Hacer cambios y commits
+git add .
+git commit -m "feat: descripción del cambio"
+
+# 3. Push a dev (pruebas)
+git push origin dev
+# ✅ Se despliega automáticamente a test.corralx.com
+```
+
+**PASO 2: Verificación en Ambiente de Pruebas**
+- Probar todos los cambios en `test.corralx.com`
+- Verificar que no hay errores
+- Confirmar que la funcionalidad funciona correctamente
+- Ejecutar tests: `php artisan test`
+
+**PASO 3: Merge a Producción (SOLO CUANDO ESTÉS SEGURO)**
+```bash
+# 1. Cambiar a main
+git checkout main
+git pull origin main
+
+# 2. Merge desde dev
+git merge dev
+
+# 3. Push a main (producción)
+git push origin main
+# ✅ Se despliega automáticamente a corralx.com
+```
+
+### Reglas Importantes
+
+⚠️ **NUNCA hacer push directo a `main` sin pasar por `dev` primero**
+
+✅ **Flujo correcto:**
+1. Cambios → `dev` → Push → Probar en `test.corralx.com`
+2. Si todo está bien → Merge `dev` → `main` → Push → Producción
+
+❌ **Flujo incorrecto:**
+- Push directo a `main` sin probar en `dev`
+- Merge a `main` sin verificar en ambiente de pruebas
+
+### Control de Acceso
+
+- **Admin (tú):** Puedes hacer push y merge a ambas ramas (`dev` y `main`)
+- **Otros desarrolladores:** Solo pueden hacer push a `dev`, NO pueden hacer push ni merge a `main`
+
+---
+
 ## 🚢 Despliegue
 
 ### Hosting Compartido

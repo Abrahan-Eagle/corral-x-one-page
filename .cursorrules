@@ -30,6 +30,84 @@ alwaysApply: true
 
 ---
 
+## 🔀 FLUJO DE TRABAJO CON GIT (OBLIGATORIO)
+
+### Estrategia de Ramas
+
+**CRÍTICO:** Este proyecto utiliza un flujo de trabajo estricto con dos ramas:
+
+1. **`dev`** - Rama de pruebas/testing
+   - Despliegue automático: `test.corralx.com`
+   - Ambiente: `APP_DEBUG=true`
+   - **SIEMPRE hacer push aquí primero**
+
+2. **`main`** - Rama de producción
+   - Despliegue automático: `corralx.com`
+   - Ambiente: `APP_DEBUG=false`
+   - **Solo merge cuando estés 100% seguro**
+
+### Proceso OBLIGATORIO
+
+**PASO 1: Desarrollo (SIEMPRE PRIMERO)**
+```bash
+# 1. Trabajar en dev
+git checkout dev
+git pull origin dev
+
+# 2. Hacer cambios y commits
+git add .
+git commit -m "feat: descripción"
+
+# 3. Push a dev (pruebas)
+git push origin dev
+# ✅ Se despliega a test.corralx.com automáticamente
+```
+
+**PASO 2: Verificación en Pruebas**
+- Probar en `test.corralx.com`
+- Verificar que no hay errores
+- Ejecutar tests: `php artisan test`
+- Confirmar funcionalidad
+
+**PASO 3: Merge a Producción (SOLO SI ESTÁS SEGURO)**
+```bash
+# 1. Cambiar a main
+git checkout main
+git pull origin main
+
+# 2. Merge desde dev
+git merge dev
+
+# 3. Push a main (producción)
+git push origin main
+# ✅ Se despliega a corralx.com automáticamente
+```
+
+### Reglas CRÍTICAS
+
+⚠️ **NUNCA hacer push directo a `main` sin pasar por `dev`**
+
+✅ **Flujo correcto:**
+1. Cambios → `dev` → Push → Probar en `test.corralx.com`
+2. Si todo OK → Merge `dev` → `main` → Push → Producción
+
+❌ **Flujo incorrecto:**
+- Push directo a `main` sin probar en `dev`
+- Merge a `main` sin verificar en pruebas
+
+### Control de Acceso
+
+- **Admin (usuario):** Puede hacer push y merge a ambas ramas
+- **Otros desarrolladores:** Solo push a `dev`, NO pueden tocar `main`
+
+**El asistente debe:**
+- Siempre hacer push a `dev` primero cuando el usuario lo solicite
+- NUNCA sugerir push directo a `main`
+- Recordar al usuario verificar en `test.corralx.com` antes de merge a `main`
+- Solo hacer merge a `main` cuando el usuario explícitamente lo solicite y confirme que está seguro
+
+---
+
 ## Nuevo flujo de pedidos y entrega (sin pagos digitales)
 - El backend debe proporcionar toda la lógica para **coordinar** la transacción, pero **no procesa pagos**. El intercambio económico ocurre fuera de la plataforma cuando comprador y vendedor se encuentran físicamente con el comprobante generado por CorralX.
 - Endpoints mínimos (ver detalles en `README.md` y `CICLO_COMPLETO_LOGIC_DETALLADA.md`):
